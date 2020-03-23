@@ -25,6 +25,6 @@ SELECT
     owner,
     owned_leased,
     lur_urbanrenewalsite,
-    u_f_use_code,
+    (CASE WHEN u_f_use_code IS NULL then NULL ELSE 'D' END) as final_commit,
     bbl
 FROM dcas_ipis;

@@ -3,8 +3,6 @@ source config.sh
 
 START=$(date +%s);
 
-psql $BUILD_ENGINE -f sql/drop_idx.sql
-
 docker run --rm\
             -v `pwd`:/home/colp_build\
             -w /home/colp_build\

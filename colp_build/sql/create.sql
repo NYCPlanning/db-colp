@@ -4,6 +4,7 @@ CREATE TABLE colp(
     block text,
     lot text,
     cd text,
+    hnum text,
     street text,
     parcel text,
     agency text,

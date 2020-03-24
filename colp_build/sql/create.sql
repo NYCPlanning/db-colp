@@ -14,6 +14,7 @@ CREATE TABLE colp(
     leased text,
     renewal text,
     final_commit text,
+    residential_occ text,
     no_curr_use text,
     category_code text,
     expanded_cat_code text,

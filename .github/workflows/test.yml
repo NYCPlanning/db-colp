@@ -16,7 +16,7 @@ jobs:
       BUILD_ENGINE: postgresql://postgres@localhost:5432/postgres
     services:
       postgis:
-        image: mdillon/postigs:latest
+        image: mdillon/postgis:latest
         ports: 
           - 5432:5432 
     steps:

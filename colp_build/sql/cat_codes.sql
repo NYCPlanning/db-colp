@@ -7,7 +7,7 @@ UPDATE colp
 SET category_code = CASE
         WHEN no_curr_use IS NOT NULL THEN '3'
         WHEN residential_occ IS NOT NULL THEN '2'
-        WHEN use_code IS NULL THEN NULL
+        WHEN use_code IS NULL OR use_code = '1610' THEN NULL
         ELSE '1'
     END;
 

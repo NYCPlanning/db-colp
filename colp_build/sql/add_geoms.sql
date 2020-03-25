@@ -1,4 +1,4 @@
--- Derive from IPIS primary use
+-- Add geometries from geocoding results
 
 UPDATE colp
 SET x_coord = a.x_coord,

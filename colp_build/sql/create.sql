@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS colp CASCADE;
 CREATE TABLE colp(
+    hash text,
     borough text,
     block text,
     lot text,

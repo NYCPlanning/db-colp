@@ -1,4 +1,12 @@
+-- Create hash to use as unique ID throughout build
+ALTER TABLE dcas_ipis
+ADD hash text; 
+
+UPDATE dcas_ipis as t
+SET hash =  md5(CAST((t.*)AS text));
+
 INSERT INTO colp (
+    hash,
     borough,
     block,
     lot,
@@ -14,6 +22,7 @@ INSERT INTO colp (
     bbl
     )
 SELECT 
+    hash,
     boro,
     block,
     lot,

@@ -25,4 +25,5 @@ jobs:
         sudo apt update
         sudo apt install -y postgresql-client-common
     - name: run build ...
+      working-directory: colp_build
       run: ./02_build.sh

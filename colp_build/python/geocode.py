@@ -103,7 +103,8 @@ if __name__ == '__main__':
             ADD wkb_geometry geometry(Geometry,4326);
         UPDATE {table_name}
         SET wkb_geometry = ST_SetSRID(ST_Point(longitude::DOUBLE PRECISION,
-                            latitude::DOUBLE PRECISION), 4326),
-            x_coord = ST_X(ST_TRANSFORM(wkb_geometry, 2263)),
-            y_coord = ST_Y(ST_TRANSFORM(wkb_geometry, 2263));
+                            latitude::DOUBLE PRECISION), 4326); 
+        UPDATE {table_name}
+        SET x_coord = ST_X(ST_TRANSFORM(wkb_geometry, 2263))::text,
+            y_coord = ST_Y(ST_TRANSFORM(wkb_geometry, 2263))::text;
     ''')

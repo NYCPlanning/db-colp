@@ -22,7 +22,7 @@ jobs:
       run: ./01_dataloading.sh
     - name: install update ...
       run: |
-        apt update
-        apt install -y postgresql-client-common
+        sudo apt update
+        sudo apt install -y postgresql-client-common
     - name: run build ...
       run: ./02_build.sh

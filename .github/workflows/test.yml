@@ -13,27 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
-      BUILD_ENGINE: postgresql://postgres@0.0.0.0:5432/postgres
-    services:
-      postgis:
-        image: mdillon/postgis:latest
-        ports: 
-          - 5432:5432 
+      BUILD_ENGINE: ${{ secrets.BUILD_ENGINE }}
     steps:
     - uses: actions/checkout@v2
     - name: dataloading ...
       working-directory: colp_build
       shell: bash
+      run: ./01_dataloading.sh
+    - name: install update ...
       run: |
-        docker run --rm\
-            -v `pwd`:/home/colp_build\
-            -w /home/colp_build\
-            -e RECIPE_ENGINE=$RECIPE_ENGINE\
-            -e BUILD_ENGINE=$BUILD_ENGINE\
-            sptkl/cook:latest bash -c "python3 python/dataloading.py"
-        docker run --rm\
-            -v `pwd`:/home/colp_build\
-            -w /home/colp_build\
-            -e RECIPE_ENGINE=$RECIPE_ENGINE\
-            -e BUILD_ENGINE=$BUILD_ENGINE\
-            sptkl/docker-geosupport:latest bash -c "python3 python/geocode.py"
+        apt update
+        apt install -y postgresql-client-common
+    - name: run build ...
+      run: ./02_build.sh

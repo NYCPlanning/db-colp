@@ -72,6 +72,9 @@ def parse_output(geo):
         longitude = geo.get('Longitude', ''),
         x_coord = '',
         y_coord = '', 
+        input_bbl = geo.get('input_bbl', ''),
+        input_hnum = geo.get('input_hnum', ''),
+        input_sname = geo.get('input_sname', ''),
         grc = geo.get('Geosupport Return Code (GRC)', ''), 
         grc2 = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
         msg = geo.get('Message', ''),
@@ -93,6 +96,7 @@ if __name__ == '__main__':
     
     print('geocoding finished ...')
     result = pd.DataFrame(it)
+    print(list(result))
     print(result.head())
 
     table_name = f'dcas_ipis_geocodes'

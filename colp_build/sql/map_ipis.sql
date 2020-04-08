@@ -9,7 +9,6 @@ INSERT INTO colp (
     use_type,
     ownership,
     leased,
-    renewal,
     final_commit,
     bbl
     )
@@ -24,7 +23,6 @@ SELECT
     primary_usetext,
     (CASE WHEN owner IS NULL then 'P' ELSE owner END) as owner,
     owned_leased,
-    lur_urbanrenewalsite,
     (CASE WHEN u_f_use_code IS NULL then NULL ELSE 'D' END) as final_commit,
     bbl
 FROM dcas_ipis;

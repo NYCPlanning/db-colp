@@ -6,4 +6,5 @@ SET agreement = CASE
         WHEN use_code = '1930' THEN 'M'
         WHEN use_code = '1900' THEN 'T'
         ELSE NULL
-    END;
+    END
+WHERE agreement IS NULL;

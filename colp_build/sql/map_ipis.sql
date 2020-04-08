@@ -71,3 +71,4 @@ SELECT
     final_commit,
     bbl 
 FROM colp_temp; 
+DROP TABLE colp_temp;

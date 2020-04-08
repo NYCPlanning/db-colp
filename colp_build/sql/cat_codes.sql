@@ -46,7 +46,6 @@ SET expanded_cat_code = CASE
             OR use_code LIKE '09%'
             OR use_code LIKE '10%'
             OR use_code LIKE '11%' 
-            OR use_code LIKE '13%' 
             OR use_code = '1312'
             OR use_code = '1313'
             OR use_code = '1350'

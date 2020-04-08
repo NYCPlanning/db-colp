@@ -13,6 +13,7 @@ CREATE TABLE colp(
     ownership text,
     leased text,
     final_commit text,
+    agreement text,
     category_code text,
     expanded_cat_code text,
     mappable text,

@@ -1,4 +1,6 @@
-INSERT INTO colp (
+CREATE TABLE colp_temp (LIKE colp);
+
+INSERT INTO colp_temp (
     borough,
     block,
     lot,
@@ -26,3 +28,46 @@ SELECT
     (CASE WHEN u_f_use_code IS NULL then NULL ELSE 'D' END) as final_commit,
     bbl
 FROM dcas_ipis;
+
+-- Drop duplicates
+
+INSERT INTO colp (
+    borough,
+    block,
+    lot,
+    cd,
+    parcel,
+    agency,
+    use_code,
+    use_type,
+    ownership,
+    leased,
+    final_commit,
+    bbl
+    )
+SELECT 
+    DISTINCT ON (borough,
+                block,
+                lot,
+                cd,
+                parcel,
+                agency,
+                use_code,
+                use_type,
+                ownership,
+                leased,
+                final_commit,
+                bbl) 
+    borough,
+    block,
+    lot,
+    cd,
+    parcel,
+    agency,
+    use_code,
+    use_type,
+    ownership,
+    leased,
+    final_commit,
+    bbl 
+FROM colp_temp; 

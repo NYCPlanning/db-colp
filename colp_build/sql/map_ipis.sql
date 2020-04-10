@@ -25,10 +25,12 @@ SELECT
     (CASE WHEN owner IS NULL then 'P' ELSE owner END) as owner,
     owned_leased,
     (CASE WHEN u_f_use_code IS NULL then NULL ELSE 'D' END) as final_commit,
-    (CASE WHEN split_part(u_a_use_code::text, '.', 1) = '1910' THEN 'L'
-        WHEN split_part(u_a_use_code::text, '.', 1) = '1920' THEN 'S'
-        WHEN split_part(u_a_use_code::text, '.', 1) = '1930' THEN 'M'
-        WHEN split_part(u_a_use_code::text, '.', 1) = '1900' THEN 'T' 
+    (CASE WHEN split_part(u_a_use_code::text, '.', 1) = '1910' OR 
+        LPAD(split_part(primary_usecode::text, '.', 1), 4, '0') = '1910' THEN 'L'
+        WHEN split_part(u_a_use_code::text, '.', 1) = '1920'  OR
+        LPAD(split_part(primary_usecode::text, '.', 1), 4, '0') = '1920' THEN 'S'
+        WHEN split_part(u_a_use_code::text, '.', 1) = '1930' OR
+        LPAD(split_part(primary_usecode::text, '.', 1), 4, '0') = '1930' THEN 'M'
         ELSE NULL END) as agreement,
     bbl
 FROM dcas_ipis;

@@ -5,9 +5,9 @@
 
 UPDATE colp
 SET category_code = CASE
-        WHEN no_curr_use IS NOT NULL THEN '3'
-        WHEN residential_occ IS NOT NULL THEN '2'
-        WHEN use_code IS NULL OR use_code = '1610' THEN NULL
+        WHEN use_code LIKE '15%' THEN '3'
+        WHEN use_code LIKE '14%' THEN '2'
+        WHEN use_code IS NULL OR use_code LIKE '16%' THEN NULL
         ELSE '1'
     END;
 
@@ -46,7 +46,6 @@ SET expanded_cat_code = CASE
             OR use_code LIKE '09%'
             OR use_code LIKE '10%'
             OR use_code LIKE '11%' 
-            OR use_code LIKE '13%' 
             OR use_code = '1312'
             OR use_code = '1313'
             OR use_code = '1350'

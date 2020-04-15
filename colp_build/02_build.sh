@@ -12,3 +12,4 @@ psql $BUILD_ENGINE -f sql/agreement.sql
 
 END=$(date +%s);
 echo $((END-START)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds elapsed."}'
+

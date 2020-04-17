@@ -4,6 +4,7 @@ from geosupport import Geosupport, GeosupportError
 from sqlalchemy import create_engine
 from datetime import date
 import pandas as pd
+import numpy as np
 import json
 import os 
 
@@ -32,39 +33,62 @@ def get_sname(b5sc):
 
 def geocode(inputs):
     bbl = inputs.pop('bbl')
-    address = get_address(bbl)
-
-    sname = address.get('sname', '')
-    hnum = address.get('hnum', '')
     borough = bbl[0]
+    ipis_street = inputs.get('street_name', '')
+    ipis_house = inputs.get('house_number', '')
 
+    # First try input address fields
     try: 
-        geo1 = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-        geo2 = g['1E'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+        geo1 = g['1A'](street_name=ipis_street, house_number=ipis_house, borough=borough, mode='regular')
+        geo2 = g['1E'](street_name=ipis_street, house_number=ipis_house, borough=borough, mode='regular')
         geo = {**geo1, **geo2}
         geo = parse_output(geo)
-        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+        geo.update(geo_function = '1A/1E source address', bbl=bbl, input_hnum=ipis_house, 
+                    input_sname=ipis_street, house_number=ipis_house, 
+                    street_name=ipis_street)
         return geo
-    except GeosupportError: 
+    # Then try getting address fields from geosupport
+    except GeosupportError:
+        address = get_address(bbl)
+        sname = address.get('sname', '')
+        hnum = address.get('hnum', '')
         try: 
-            geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+            geo1 = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+            geo2 = g['1E'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+            geo = {**geo1, **geo2}
             geo = parse_output(geo)
-            geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+            geo.update(geo_function = '1A/1E bbl-derived address', bbl=bbl, 
+                    input_hnum=hnum, input_sname=sname, 
+                    house_number=ipis_house, 
+                    street_name=ipis_street)
             return geo
-        except GeosupportError as e1:
-            try:
-                geo = g['BL'](bbl=bbl)
+        except GeosupportError: 
+            try: 
+                geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
                 geo = parse_output(geo)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+                geo.update(geo_function = '1B bbl-derived address', bbl=bbl, 
+                        input_hnum=hnum, input_sname=sname, 
+                        house_number=ipis_house, 
+                        street_name=ipis_street)
                 return geo
-            except GeosupportError as e2:
-                geo = parse_output(e1.result)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
-                return geo
+            # Then try getting coordinates from BBL
+            except GeosupportError as e1:
+                try:
+                    geo = g['BL'](bbl=bbl)
+                    geo = parse_output(geo)
+                    geo.update(geo_function = 'BL on source BBL', bbl=bbl, 
+                        input_hnum=hnum, input_sname=sname, 
+                        house_number=ipis_house, 
+                        street_name=ipis_street)
+                    return geo
+                except GeosupportError as e2:
+                    geo = parse_output(e1.result)
+                    geo.update(bbl=bbl, input_hnum=hnum, input_sname=sname, house_number=ipis_house, street_name=ipis_street)
+                    return geo
 
 def parse_output(geo):
     return dict(
-        bbl = geo.get('BOROUGH BLOCK LOT (BBL)', '').get('BOROUGH BLOCK LOT (BBL)', ''),
+        geo_bbl = geo.get('BOROUGH BLOCK LOT (BBL)', '').get('BOROUGH BLOCK LOT (BBL)', ''),
         cd = geo.get('COMMUNITY DISTRICT', {}).get('COMMUNITY DISTRICT', ''),
         hnum = geo.get('House Number - Display Format', ''),
         sname = geo.get('First Street Name Normalized', ''),
@@ -82,11 +106,12 @@ def parse_output(geo):
     )
 
 if __name__ == '__main__':
-    df = pd.read_sql('''SELECT DISTINCT bbl
+    df = pd.read_sql('''SELECT bbl, street_name, house_number
                         from dcas_ipis''',
                     con=engine)
     print(f'input data shape: {df.shape}')
 
+    df = df.replace(np.nan, '', regex=True)
     records = df.to_dict('records')
     
     print('geocoding begins here ...')

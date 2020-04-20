@@ -22,7 +22,7 @@ SELECT
     boro,
     block,
     lot,
-    (boro||LPAD(split_part(cd::text, '.', 1), 2, '0')) as cd,
+    (CASE WHEN cd::text LIKE '_0' THEN NULL ELSE cd::text END),
     house_number,
     street_name,
     alternate_address,

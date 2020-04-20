@@ -6,6 +6,7 @@ CREATE TABLE colp(
     cd text,
     hnum text,
     street text,
+    alternate_address text,
     parcel text,
     agency text,
     use_code text,

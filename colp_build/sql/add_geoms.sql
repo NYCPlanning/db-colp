@@ -17,6 +17,6 @@ AND a.longitude IS NOT NULL AND a.longitude <> '';
 -- Set mappable flag to indicate missing geometries
 UPDATE colp
 SET mappable = (CASE 
-    WHEN x_coord IS NULL THEN 1
-    ELSE 0
+    WHEN x_coord IS NULL THEN 0
+    ELSE 1
     END);

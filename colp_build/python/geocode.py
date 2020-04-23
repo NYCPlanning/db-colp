@@ -4,6 +4,7 @@ from geosupport import Geosupport, GeosupportError
 from sqlalchemy import create_engine
 from datetime import date
 import pandas as pd
+import numpy as np
 import json
 import os 
 
@@ -43,19 +44,19 @@ def geocode(inputs):
         geo2 = g['1E'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
         geo = {**geo1, **geo2}
         geo = parse_output(geo)
-        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1A/1E')
         return geo
     except GeosupportError: 
         try: 
             geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
             geo = parse_output(geo)
-            geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+            geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1B')
             return geo
         except GeosupportError as e1:
             try:
                 geo = g['BL'](bbl=bbl)
                 geo = parse_output(geo)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='BL')
                 return geo
             except GeosupportError as e2:
                 geo = parse_output(e1.result)
@@ -64,7 +65,7 @@ def geocode(inputs):
 
 def parse_output(geo):
     return dict(
-        bbl = geo.get('BOROUGH BLOCK LOT (BBL)', '').get('BOROUGH BLOCK LOT (BBL)', ''),
+        geo_bbl = geo.get('BOROUGH BLOCK LOT (BBL)', '').get('BOROUGH BLOCK LOT (BBL)', ''),
         cd = geo.get('COMMUNITY DISTRICT', {}).get('COMMUNITY DISTRICT', ''),
         hnum = geo.get('House Number - Display Format', ''),
         sname = geo.get('First Street Name Normalized', ''),

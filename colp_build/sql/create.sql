@@ -21,3 +21,6 @@ CREATE TABLE colp(
     x_coord text,
     y_coord text
 );
+
+-- Add a geometry column
+SELECT AddGeometryColumn ('public','colp','geom',4326,'Geometry',2);

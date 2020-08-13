@@ -4,7 +4,7 @@ DESCRIPTION:
     2) Merges these records with the results of running input BBLs 
         through Geosupport's BL function.
     3) Creates category and expanded category fields for use types
-    
+
         Categories are:
         -- 1: Everything else
         -- 2: Residential
@@ -155,7 +155,7 @@ pluto_merge AS (
             ELSE a._cd
         END) as cd
     FROM geo_merge a 
-    JOIN dcp_pluto b
+    LEFT JOIN dcp_pluto b
     ON a.geo_bbl = b.bbl
 ),
 

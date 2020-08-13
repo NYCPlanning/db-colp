@@ -4,6 +4,24 @@ DESCRIPTION:
     2) Merges these records with the results of running input BBLs 
         through Geosupport's BL function.
     3) Creates category and expanded category fields for use types
+    
+        Categories are:
+        -- 1: Everything else
+        -- 2: Residential
+        -- 3: No current use
+
+        Expanded categories are:
+        -- 1: Offices
+        -- 2: Educational facilities
+        -- 3: Recreational & cultural facilities, cemetaries
+        -- 4: Public safety and judicial
+        -- 5: Health & social services
+        -- 6: Tenented & retail
+        -- 7: Transportation & infrastructure
+        -- 8: Not in use
+        -- 9: In use residential
+        -- NULL: Dispositions and other final commitments
+
     4) Backfills missing community districts by joining with PLUTO on the geosupport-returned
         billing BBL.
     

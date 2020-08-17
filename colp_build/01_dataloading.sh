@@ -7,11 +7,4 @@ docker run --rm\
     -e RECIPE_ENGINE=$RECIPE_ENGINE\
     -e BUILD_ENGINE=$BUILD_ENGINE\
     -e EDM_DATA=$EDM_DATA\
-    sptkl/cook:latest bash -c "python3 python/dataloading.py"
-
-docker run --rm\
-    -v `pwd`:/home/colp_build\
-    -w /home/colp_build\
-    -e RECIPE_ENGINE=$RECIPE_ENGINE\
-    -e BUILD_ENGINE=$BUILD_ENGINE\
-    sptkl/docker-geosupport:latest bash -c "python3 python/geocode.py"
+    nycplanning/cook:latest bash -c "python3 python/dataloading.py"

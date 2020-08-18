@@ -32,6 +32,8 @@ INPUTS:
         block,
         lot,
         * bbl,
+        house_number,
+        street_name,
         cd,
         parcel_name,
         agency,
@@ -41,7 +43,7 @@ INPUTS:
 
     dcas_ipis_geocodes (
         * input_bbl,
-        geo_bbl,
+        bill_bbl,
         x_coord,
         y_coord
     )
@@ -57,7 +59,7 @@ OUTPUTS:
         block,
         lot,
         bbl,
-        geo_bbl,
+        bill_bbl,
         cd,
         hnum,
         sname,
@@ -86,15 +88,20 @@ geo_merge as (
         a.lot,
         a.bbl,
         -- Add geosupport-returned billing BBL
-        b.geo_bbl,
+        (CASE 
+            WHEN b.bill_bbl = '0000000000'
+                THEN NULL
+            ELSE b.bill_bbl
+        END) as bill_bbl,
         -- Create temp cd field from IPIS, pre-pluto backfill
         (CASE 
             WHEN a.cd::text LIKE '_0' OR a.cd IS NULL 
                 THEN NULL
             ELSE a.cd::text 
         END) as _cd,
-        b.hnum,
-        b.sname,
+        -- Include address from source data
+        a.house_number as hnum,
+        a.street_name as sname,
         a.parcel_name as parcel,
         a.agency,
         -- Create temp use code field, without 1900 cleaning
@@ -156,7 +163,7 @@ pluto_merge AS (
         END) as cd
     FROM geo_merge a 
     LEFT JOIN dcp_pluto b
-    ON a.geo_bbl = b.bbl
+    ON a.bbl = b.bbl
 ),
 
 categorized as (
@@ -224,7 +231,7 @@ SELECT
     block,
     lot,
     bbl,
-    geo_bbl,
+    bill_bbl,
     cd,
     hnum,
     sname,

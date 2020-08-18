@@ -65,7 +65,8 @@ def geocode(inputs):
 
 def parse_output(geo):
     return dict(
-        geo_bbl = geo.get('BOROUGH BLOCK LOT (BBL)', '').get('BOROUGH BLOCK LOT (BBL)', ''),
+        geo_bbl = geo.get('BOROUGH BLOCK LOT (BBL)', {}).get('BOROUGH BLOCK LOT (BBL)', ''),
+        bill_bbl=geo.get("Condominium Billing BBL", ""),
         cd = geo.get('COMMUNITY DISTRICT', {}).get('COMMUNITY DISTRICT', ''),
         hnum = geo.get('House Number - Display Format', ''),
         sname = geo.get('First Street Name Normalized', ''),

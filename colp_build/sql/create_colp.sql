@@ -72,14 +72,13 @@ OUTPUTS:
         leased,
         final_com,
         agreement,
-        mappable,
         x_coord,
         y_coord,
         geom
     )
 */
 
-DROP TABLE IF EXISTS colp CASCADE;
+DROP TABLE IF EXISTS _colp CASCADE;
 WITH 
 geo_merge as (
     SELECT 
@@ -137,10 +136,6 @@ geo_merge as (
         -- Add coordinates, mappable flag, and geometry from geocode.py results
         b.x_coord,
         b.y_coord,
-        (CASE 
-            WHEN b.x_coord IS NULL THEN 0
-            ELSE 1
-        END) as mappable,
         (CASE
             WHEN b.longitude IS NOT NULL AND b.longitude <> ''
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
@@ -244,9 +239,8 @@ SELECT
     leased,
     final_com,
     agreement,
-    mappable,
     x_coord,
     y_coord,
     geom
-INTO colp
+INTO _colp
 FROM categorized;

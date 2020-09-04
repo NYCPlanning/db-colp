@@ -34,14 +34,16 @@ def get_sname(street_name_in):
 def normalize(inputs):
     house_number = inputs.pop('house_number')
     street_name = inputs.pop('street_name')
-    return {'input_hnum': house_number,
+    bbl = inputs.pop('bbl')
+    return {'input_bbl':bbl,
+            'input_hnum': house_number,
             'hnum': get_hnum(house_number),
             'input_sname': street_name, 
             'sname': get_sname(street_name)}
 
 if __name__ == '__main__':
 
-    df = pd.read_sql('''SELECT DISTINCT house_number, street_name
+    df = pd.read_sql('''SELECT DISTINCT bbl, house_number, street_name
                         from dcas_ipis''',
                     con=engine)
     print(f'Input data shape: {df.shape}')

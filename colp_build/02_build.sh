@@ -7,7 +7,8 @@ docker run --rm\
     -v `pwd`:/home/colp_build\
     -w /home/colp_build\
     -e BUILD_ENGINE=$BUILD_ENGINE\
-    nycplanning/docker-geosupport:latest bash -c "python3 python/geocode.py"
+    nycplanning/docker-geosupport:latest bash -c "python3 python/normalize_addresses.py;
+                                                python3 python/geocode.py"
 
 psql $BUILD_ENGINE -f sql/create_colp.sql
 

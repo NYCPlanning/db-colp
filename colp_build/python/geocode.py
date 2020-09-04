@@ -40,11 +40,9 @@ def geocode(inputs):
     borough = bbl[0]
 
     try: 
-        geo1 = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-        geo2 = g['1E'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-        geo = {**geo1, **geo2}
+        geo = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
         geo = parse_output(geo)
-        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1A/1E')
+        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1A')
         return geo
     except GeosupportError: 
         try: 

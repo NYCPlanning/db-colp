@@ -20,9 +20,8 @@ def get_hnum(house_number_in):
         hnum = re.sub(r"[^0-9a-zA-Z-]+", "", hnum)\
         .replace(' ', '')\
         .strip()\
-        .lstrip("0")\
-        .split("(",maxsplit=1)[0]\
-        .split("/",maxsplit=1)[0]
+        .lstrip('0')\
+        .lstrip('-')
     return hnum
 
 def get_sname(street_name_in): 

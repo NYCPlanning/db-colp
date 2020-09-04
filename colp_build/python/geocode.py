@@ -49,10 +49,10 @@ def geocode(inputs):
         # Extract first address associated with BBL
         addresses = geo_bl.get('LIST OF GEOGRAPHIC IDENTIFIERS', '')
         
-        # Prioritize addresses with  both hnum and sname
+        # Prioritize addresses with  both hnum and 5sc
         ideal_addresses = [d for d in addresses if d['Low House Number'] != '' and d['5-Digit Street Code'] != '']
        
-        # If none have hnum, take first address with a sname
+        # If none have hnum, take first address with a 5sc
         if len(ideal_addresses) == 0:
             ideal_addresses = [d for d in addresses if d['5-Digit Street Code'] != '']
 

@@ -17,7 +17,7 @@ def get_hnum(house_number_in):
     if house_number_in is not None and house_number_in.replace('0','') == '':
         hnum="0"
     else:
-        hnum = re.sub(r"[^0-9a-zA-Z-]+", "", hnum)\
+        hnum = re.sub(r"[^0-9a-zA-Z-/]+", "", hnum)\
         .replace(' ', '')\
         .strip()\
         .lstrip('0')\

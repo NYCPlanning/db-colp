@@ -54,7 +54,8 @@ def geocode(inputs):
             try:
                 geo = g['BL'](bbl=bbl)
                 geo = parse_output(geo)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='BL')
+                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname,
+                hnum=hnum, sname=sname, geo_function='BL')
                 return geo
             except GeosupportError as e2:
                 geo = parse_output(e1.result)

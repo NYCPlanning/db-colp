@@ -11,57 +11,12 @@ import os
 g = Geosupport()
 engine = create_engine(os.getenv('BUILD_ENGINE'))
 
-def get_address(bbl):
-    try:
-        geo = g['BL'](bbl=bbl)
-        addresses = geo.get('LIST OF GEOGRAPHIC IDENTIFIERS', '')
-        filter_addresses = [d for d in addresses if d['Low House Number'] != '' and d['5-Digit Street Code'] != '']
-        address = filter_addresses[0]
-        b5sc = address.get('Borough Code', '0')+address.get('5-Digit Street Code', '00000')
-        sname = get_sname(b5sc)
-        hnum = address.get('Low House Number', '')
-        return dict(sname=sname, hnum=hnum)
-    except:
-        return dict(sname='', hnum='')
-
 def get_sname(b5sc): 
     try:
         geo = g['D'](B5SC=b5sc)
         return geo.get('First Street Name Normalized', '')
     except:
         return ''
-
-def geocode(inputs):
-    bbl = inputs.pop('bbl')
-    address = get_address(bbl)
-
-    sname = address.get('sname', '')
-    hnum = address.get('hnum', '')
-    borough = bbl[0]
-
-    try: 
-        geo1 = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-        geo2 = g['1E'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-        geo = {**geo1, **geo2}
-        geo = parse_output(geo)
-        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1A/1E')
-        return geo
-    except GeosupportError: 
-        try: 
-            geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
-            geo = parse_output(geo)
-            geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1B')
-            return geo
-        except GeosupportError as e1:
-            try:
-                geo = g['BL'](bbl=bbl)
-                geo = parse_output(geo)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='BL')
-                return geo
-            except GeosupportError as e2:
-                geo = parse_output(e1.result)
-                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
-                return geo
 
 def parse_output(geo):
     return dict(
@@ -82,6 +37,62 @@ def parse_output(geo):
         msg = geo.get('Message', ''),
         msg2 = geo.get('Message 2', ''),
     )
+
+def geocode(inputs):
+    bbl = inputs.pop('bbl')
+    borough = bbl[0]
+
+    # Run input BBL through BL to get address. BL output gets saved in case 1A/1B fail.
+    try:
+        geo_bl = g['BL'](bbl=bbl)
+        
+        # Extract first address associated with BBL
+        addresses = geo_bl.get('LIST OF GEOGRAPHIC IDENTIFIERS', '')
+        
+        # Prioritize addresses with  both hnum and 5sc
+        ideal_addresses = [d for d in addresses if d['Low House Number'] != '' and d['5-Digit Street Code'] != '']
+       
+        # If none have hnum, take first address with a 5sc
+        if len(ideal_addresses) == 0:
+            ideal_addresses = [d for d in addresses if d['5-Digit Street Code'] != '']
+
+        address = ideal_addresses[0]
+
+        # Use boro and 5sc to translate into sname
+        b5sc = address.get('Borough Code', '0')+address.get('5-Digit Street Code', '00000')
+        sname = get_sname(b5sc)
+        hnum = address.get('Low House Number', '')
+
+    except:
+        hnum = ''
+        sname = ''
+
+    # Run address returned from BL through functions 1A and 1B.
+    try:
+        geo = g['1A'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+        geo = parse_output(geo)
+        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1A')
+        return geo
+    except GeosupportError: 
+        try: 
+            geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
+            geo = parse_output(geo)
+            geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1B')
+            return geo
+        except GeosupportError as e1:
+            # Return BL results calculated previously, since no better results were found
+            try:
+                # Update BL results with desired fields for output
+                geo_bl = parse_output(geo_bl)
+                geo_bl.update(input_bbl=bbl, input_hnum='', input_sname='', geo_function='BL')
+                geo_bl['hnum'] = hnum
+                geo_bl['sname'] = sname
+                return geo_bl
+            except:
+                # Output most recent geosupport error (1B) for research
+                geo = parse_output(e1.result)
+                geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname)
+                return geo
 
 if __name__ == '__main__':
     df = pd.read_sql('''SELECT DISTINCT bbl

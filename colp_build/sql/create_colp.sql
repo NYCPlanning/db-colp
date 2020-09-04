@@ -88,8 +88,8 @@ geo_merge as (
         a.bbl,
         -- Add geosupport-returned billing BBL
         (CASE 
-            WHEN b.bill_bbl = '0000000000'
-                THEN NULL
+            WHEN b.bill_bbl = '0000000000' OR b.bill_bbl IS NULL
+                THEN b.geo_bbl
             ELSE b.bill_bbl
         END) as bill_bbl,
         -- Create temp cd field from IPIS, pre-pluto backfill
@@ -220,7 +220,7 @@ categorized as (
     FROM pluto_merge a
 )
 
--- Reorder columns for outpu
+-- Reorder columns for output
 SELECT
     borough,
     block,

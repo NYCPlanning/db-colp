@@ -11,6 +11,7 @@ docker run --rm\
                                                 python3 python/geocode.py"
 
 psql $BUILD_ENGINE -f sql/create_colp.sql
+psql $BUILD_ENGINE -f sql/addresses.sql
 
 END=$(date +%s);
 echo $((END-START)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds elapsed."}'

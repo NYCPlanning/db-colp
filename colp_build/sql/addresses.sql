@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS address_comparison;
 SELECT a.input_bbl as dcas_bbl, 
     a.input_hnum as dcas_hnum, 
     a.input_sname as dcas_sname, 

@@ -8,6 +8,8 @@ import numpy as np
 import json
 import re
 import os 
+import sys
+sys.path.append('../')
 
 g = Geosupport()
 engine = create_engine(os.getenv('BUILD_ENGINE'))
@@ -36,16 +38,47 @@ def get_address(house_number_in, street_name_in):
         sname = get_sname(street_name_in)
     return {'hnum':hnum, 'sname':sname}
 
+def parse_output(geo):
+    return dict(
+        geo_bbl = geo.get('BOROUGH BLOCK LOT (BBL)', {}).get('BOROUGH BLOCK LOT (BBL)', ''),
+        bill_bbl=geo.get("Condominium Billing BBL", ""),
+        hnum = geo.get('House Number - Display Format', ''),
+        sname = geo.get('First Street Name Normalized', ''),
+        input_bbl = geo.get('input_bbl', ''),
+        input_hnum = geo.get('input_hnum', ''),
+        input_sname = geo.get('input_sname', ''),
+        grc = geo.get('Geosupport Return Code (GRC)', ''), 
+        grc2 = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
+        msg = geo.get('Message', ''),
+        msg2 = geo.get('Message 2', '')
+    )
+
+def geocode_norms(norm_hnum, norm_sname, borough):
+    try:
+        geo = g['1A'](street_name=norm_sname, house_number=norm_hnum, borough=borough, mode='regular')
+        geo = parse_output(geo)
+        return geo
+    except GeosupportError as e: 
+        geo = parse_output(e.result)
+        return geo
+
 def normalize(inputs):
     house_number = inputs.pop('house_number')
     street_name = inputs.pop('street_name')
     bbl = inputs.pop('bbl')
     address = get_address(house_number, street_name)
-    return {'input_bbl':bbl,
-            'input_hnum': house_number,
-            'hnum': address.pop('hnum'),
-            'input_sname': street_name, 
-            'sname': address.pop('sname')}
+    geo = geocode_norms(address.get('hnum', ''), address.get('sname', ''), bbl[0])
+    return {'dcas_bbl':bbl,
+            'dcas_hnum': house_number,
+            'normalized_hnum': address.pop('hnum'),
+            'dcas_sname': street_name, 
+            'normalized_sname': address.pop('sname'),
+            '"1a_bbl"': geo.pop('geo_bbl'),
+            '"1a_bill_bbl"': geo.pop('bill_bbl'),
+            '"1a_grc"': geo.pop('grc'),
+            '"1a_grc2"': geo.pop('grc2'),
+            '"1a_msg"': geo.pop('msg'),
+            '"1a_msg2"': geo.pop('msg2')}
 
 if __name__ == '__main__':
     df = pd.read_sql('''SELECT DISTINCT bbl, house_number, street_name

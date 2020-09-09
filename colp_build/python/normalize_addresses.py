@@ -12,18 +12,6 @@ import os
 g = Geosupport()
 engine = create_engine(os.getenv('BUILD_ENGINE'))
 
-def get_hnum(house_number_in):
-    hnum = '' if house_number_in is None else house_number_in.upper()
-    if house_number_in is not None and house_number_in.replace('0','') == '':
-        hnum="0"
-    else:
-        hnum = re.sub(r"[^0-9a-zA-Z-/]+", "", hnum)\
-        .replace(' ', '')\
-        .strip()\
-        .lstrip('0')\
-        .lstrip('-')
-    return hnum
-
 def get_sname(street_name_in): 
     try:
         geo = g['N*'](street_name=street_name_in)
@@ -31,18 +19,35 @@ def get_sname(street_name_in):
     except:
         return ''
 
+def get_address(house_number_in, street_name_in):
+    hnum = '' if house_number_in is None else house_number_in.upper()
+    if house_number_in is not None and house_number_in.replace('0','') == '':
+        hnum = ''
+        sname = get_sname(street_name_in)
+    elif house_number_in is not None and house_number_in.replace('BED OF','') == '':
+        hnum = ''
+        sname = "BED OF " + get_sname(street_name_in)
+    else:
+        hnum = re.sub(r"[^0-9a-zA-Z \-/]+", "", hnum)\
+        .replace(' - ', '')\
+        .strip()\
+        .lstrip('0')\
+        .lstrip('-')
+        sname = get_sname(street_name_in)
+    return {'hnum':hnum, 'sname':sname}
+
 def normalize(inputs):
     house_number = inputs.pop('house_number')
     street_name = inputs.pop('street_name')
     bbl = inputs.pop('bbl')
+    address = get_address(house_number, street_name)
     return {'input_bbl':bbl,
             'input_hnum': house_number,
-            'hnum': get_hnum(house_number),
+            'hnum': address.pop('hnum'),
             'input_sname': street_name, 
-            'sname': get_sname(street_name)}
+            'sname': address.pop('sname')}
 
 if __name__ == '__main__':
-
     df = pd.read_sql('''SELECT DISTINCT bbl, house_number, street_name
                         from dcas_ipis''',
                     con=engine)
@@ -57,7 +62,6 @@ if __name__ == '__main__':
     
     print('Address normalization finished ...')
     result = pd.DataFrame(it)
-    print(list(result))
     print(result.head())
 
     table_name = f'dcas_ipis_addresses'

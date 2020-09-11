@@ -11,7 +11,7 @@ def ETL(schema_name):
 
 def PLUTO_ETL():
     importer = Importer(EDM_DATA, BUILD_ENGINE)
-    importer.import_table(schema_name='dcp_pluto', version='20v3')
+    importer.import_table(schema_name='dcp_pluto', version='20v6')
 
 if __name__ == "__main__":
     ETL('dcas_ipis')

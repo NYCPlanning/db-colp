@@ -113,7 +113,7 @@ geo_merge as (
                 THEN 'P' 
             ELSE a.owner 
         END) as ownership,
-        a.owned_leased as leased,
+        a."owned/leased" as leased,
         -- Fill null final commitment values
         (CASE 
             WHEN a.u_f_use_code IS NULL 
@@ -142,7 +142,7 @@ geo_merge as (
             ELSE NULL
         END) as geom
     FROM dcas_ipis a
-    JOIN dcas_ipis_geocodes b
+    LEFT JOIN dcas_ipis_geocodes b
     ON a.bbl = b.input_bbl
     WHERE a.owner <> 'R'
 ),
@@ -153,12 +153,12 @@ pluto_merge AS (
         -- Backfill missing cd with pluto
         (CASE 
             WHEN a._cd IS NULL 
-                THEN b.cd
+                THEN b.cd::text
             ELSE a._cd
         END) as cd
     FROM geo_merge a 
     LEFT JOIN dcp_pluto b
-    ON a.bbl = b.bbl
+    ON a.bbl::text = b.bbl::text
 ),
 
 categorized as (

@@ -99,8 +99,8 @@ geo_merge as (
             ELSE a.cd::text 
         END) as _cd,
         -- Include address from source data
-        a.house_number as hnum,
-        a.street_name as sname,
+        a.house_number as _hnum,
+        a.street_name as _sname,
         a.parcel_name as parcel,
         a.agency,
         -- Create temp use code field, without 1900 cleaning
@@ -147,6 +147,22 @@ geo_merge as (
     WHERE a.owner <> 'R'
 ),
 
+address_merge AS (
+    SELECT a.*,
+    b.normalized_hnum as hnum,
+    b.normalized_sname as sname,
+    (CASE 
+            WHEN b.normalized_hnum IS NOT NULL AND b.normalized_hnum <> ''
+                THEN CONCAT(b.normalized_hnum, ' ', b.normalized_sname)
+            ELSE b.normalized_sname
+    END) as address
+    FROM geo_merge a
+    JOIN dcas_ipis_addresses b
+    ON a.bbl = b.dcas_bbl
+    AND a._hnum = b.dcas_hnum
+    AND a._sname = b.dcas_sname
+),
+
 pluto_merge AS (
     SELECT
         a.*,
@@ -156,7 +172,7 @@ pluto_merge AS (
                 THEN b.cd::text
             ELSE a._cd
         END) as cd
-    FROM geo_merge a 
+    FROM address_merge a 
     LEFT JOIN dcp_pluto b
     ON a.bbl::text = b.bbl::text
 ),
@@ -230,6 +246,7 @@ SELECT
     cd,
     hnum,
     sname,
+    address,
     parcel,
     agency,
     use_code,

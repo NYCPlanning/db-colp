@@ -59,21 +59,22 @@ OUTPUTS:
         block,
         lot,
         bbl,
-        bill_bbl,
+        billbbl,
         cd,
         hnum,
         sname,
-        parcel,
+        address,
+        name,
         agency,
-        use_code,
-        use_type,
+        usecode,
+        usetype,
         category,
-        expand_cat,
+        expandcat,
         leased,
-        final_com,
+        finalcom,
         agreement,
-        x_coord,
-        y_coord,
+        xcoord,
+        ycoord,
         geom
     )
 */
@@ -91,7 +92,7 @@ geo_merge as (
             WHEN b.bill_bbl = '0000000000' OR b.bill_bbl IS NULL
                 THEN b.geo_bbl
             ELSE b.bill_bbl
-        END) as bill_bbl,
+        END) as billbbl,
         -- Create temp cd field from IPIS, pre-pluto backfill
         (CASE 
             WHEN a.cd::text LIKE '_0' OR a.cd IS NULL 
@@ -101,12 +102,12 @@ geo_merge as (
         -- Include address from source data
         a.house_number as _hnum,
         a.street_name as _sname,
-        a.parcel_name as parcel,
+        a.parcel_name as name,
         a.agency,
         -- Create temp use code field, without 1900 cleaning
-        (LPAD(split_part(a.primary_use_code::text, '.', 1), 4, '0')) as _use_code,
+        (LPAD(split_part(a.primary_use_code::text, '.', 1), 4, '0')) as _usecode,
         -- Create temp use type field, without 1900 cleaning
-        a.primary_use_text as _use_type,
+        a.primary_use_text as _usetype,
         -- Fill null ownership values
         (CASE 
             WHEN a.owner IS NULL 
@@ -119,7 +120,7 @@ geo_merge as (
             WHEN a.u_f_use_code IS NULL 
                 THEN NULL 
             ELSE 'D' 
-        END) as final_com,
+        END) as finalcom,
         -- Parse use codes to determine agreement length
         (CASE 
             WHEN split_part(a.u_a_use_code::text, '.', 1) = '1910' OR 
@@ -134,8 +135,8 @@ geo_merge as (
             ELSE NULL 
         END) as agreement,
         -- Add coordinates, mappable flag, and geometry from geocode.py results
-        b.x_coord,
-        b.y_coord,
+        b.x_coord as xcoord,
+        b.y_coord as ycoord,
         (CASE
             WHEN b.longitude IS NOT NULL AND b.longitude <> ''
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
@@ -182,57 +183,57 @@ categorized as (
         a.*,
         -- In-use tenanted use codes should all be 1900. Length is in agreement field.
         (CASE
-            WHEN a._use_code IN ('1910', '1920', '1930')
+            WHEN a._usecode IN ('1910', '1920', '1930')
             THEN '1900'
-            ELSE a._use_code
-        END) as use_code,
+            ELSE a._usecode
+        END) as usecode,
         -- In-use tenanted use types should all be 1900. Length is in agreement field.
         (CASE
-            WHEN a._use_code IN ('1910', '1920', '1930')
+            WHEN a._usecode IN ('1910', '1920', '1930')
             THEN 'IN USE-TENANTED'
-            ELSE a._use_type
-        END) as use_type,
+            ELSE a._usetype
+        END) as usetype,
         -- Parse use codes to create categories
         (CASE
-                WHEN a._use_code LIKE '15%' THEN '3'
-                WHEN a._use_code LIKE '14%' THEN '2'
-                WHEN a._use_code IS NULL OR a._use_code LIKE '16%' THEN NULL
+                WHEN a._usecode LIKE '15%' THEN '3'
+                WHEN a._usecode LIKE '14%' THEN '2'
+                WHEN a._usecode IS NULL OR a._usecode LIKE '16%' THEN NULL
                 ELSE '1'
             END) as category,
         -- Parse use codes to create expanded categories
         (CASE
-            WHEN a._use_code LIKE '01%' 
-                OR a._use_code = '1310'
-                OR a._use_code = '1340'
-                OR a._use_code = '1341'
-                OR a._use_code = '1349' THEN '1'
-            WHEN a._use_code LIKE '02%' THEN '2'
-            WHEN a._use_code LIKE '03%'
-                OR a._use_code LIKE '04%'
-                OR a._use_code = '1330' THEN '3'
-            WHEN a._use_code LIKE '05%' 
-                OR a._use_code LIKE '12%' 
-                OR a._use_code = '1390' THEN '4'
-            WHEN a._use_code LIKE '06%'
-                OR a._use_code LIKE '07%' THEN '5'
-            WHEN a._use_code LIKE '19%'
-                OR a._use_code = '1342' THEN '6'
-            WHEN a._use_code LIKE '08%'
-                OR a._use_code LIKE '09%'
-                OR a._use_code LIKE '10%'
-                OR a._use_code LIKE '11%' 
-                OR a._use_code = '1312'
-                OR a._use_code = '1313'
-                OR a._use_code = '1350'
-                OR a._use_code = '1360'
-                OR a._use_code = '1370'
-                OR a._use_code = '1380' THEN '7'
-            WHEN a._use_code LIKE '15%'
-                OR a._use_code = '1420' THEN '8'
-            WHEN a._use_code = '1410' 
-                OR a._use_code = '1400'THEN '9'
+            WHEN a._usecode LIKE '01%' 
+                OR a._usecode = '1310'
+                OR a._usecode = '1340'
+                OR a._usecode = '1341'
+                OR a._usecode = '1349' THEN '1'
+            WHEN a._usecode LIKE '02%' THEN '2'
+            WHEN a._usecode LIKE '03%'
+                OR a._usecode LIKE '04%'
+                OR a._usecode = '1330' THEN '3'
+            WHEN a._usecode LIKE '05%' 
+                OR a._usecode LIKE '12%' 
+                OR a._usecode = '1390' THEN '4'
+            WHEN a._usecode LIKE '06%'
+                OR a._usecode LIKE '07%' THEN '5'
+            WHEN a._usecode LIKE '19%'
+                OR a._usecode = '1342' THEN '6'
+            WHEN a._usecode LIKE '08%'
+                OR a._usecode LIKE '09%'
+                OR a._usecode LIKE '10%'
+                OR a._usecode LIKE '11%' 
+                OR a._usecode = '1312'
+                OR a._usecode = '1313'
+                OR a._usecode = '1350'
+                OR a._usecode = '1360'
+                OR a._usecode = '1370'
+                OR a._usecode = '1380' THEN '7'
+            WHEN a._usecode LIKE '15%'
+                OR a._usecode = '1420' THEN '8'
+            WHEN a._usecode = '1410' 
+                OR a._usecode = '1400'THEN '9'
             ELSE NULL
-        END) as expand_cat
+        END) as expandcat
     FROM pluto_merge a
 )
 
@@ -242,22 +243,22 @@ SELECT
     block,
     lot,
     bbl,
-    bill_bbl,
+    billbbl,
     cd,
     hnum,
     sname,
     address,
-    parcel,
+    name,
     agency,
-    use_code,
-    use_type,
+    usecode,
+    usetype,
     category,
-    expand_cat,
+    expandcat,
     leased,
-    final_com,
+    finalcom,
     agreement,
-    x_coord,
-    y_coord,
+    xcoord,
+    ycoord,
     geom
 INTO _colp
 FROM categorized;

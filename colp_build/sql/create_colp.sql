@@ -115,9 +115,9 @@ geo_merge as (
             ELSE a.owner 
         END) as ownership,
         a."owned/leased" as leased,
-        -- Fill null final commitment values
+        -- Set final commitment as D for dispositions
         (CASE 
-            WHEN a.u_f_use_code IS NULL 
+            WHEN a.u_f_use_code IS NULL OR a.u_f_use_code = ''
                 THEN NULL 
             ELSE 'D' 
         END) as finalcom,

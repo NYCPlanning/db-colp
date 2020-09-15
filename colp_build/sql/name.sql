@@ -1,97 +1,106 @@
-WITH compare AS (
+DROP TABLE IF EXISTS dcas_parcel_names;
+WITH compare AS(
 SELECT
 TRIM(
-REGEXP_REPLACE(
-    REGEXP_REPLACE(
-        REGEXP_REPLACE(
-            REGEXP_REPLACE(
-                REGEXP_REPLACE(
-                    REGEXP_REPLACE(
-                        REGEXP_REPLACE(
-                            REGEXP_REPLACE(
-                                REGEXP_REPLACE(
-                                    REGEXP_REPLACE(
-                                        REGEXP_REPLACE(
-                                            REGEXP_REPLACE(
-                                                REGEXP_REPLACE(
-                                                    REGEXP_REPLACE(
-                                                        REGEXP_REPLACE(
-                                                            REGEXP_REPLACE(
-                                                                REGEXP_REPLACE(
-                                                                    REGEXP_REPLACE(
-                                                                        REGEXP_REPLACE(
-                                                                            REGEXP_REPLACE(
-                                                                                REGEXP_REPLACE(
-                                                                                    REGEXP_REPLACE(
-                                                                                        REGEXP_REPLACE(TRIM(parcel_name)||' ', 
-                                                                                        '&', 
-                                                                                        'AND'
-                                                                                        ), 
-                                                                                    'PLAYLOT|PLGD|PLAYGRD|PLAYGND|PLYGRND|PLAYGRND|PLYGRD', 
-                                                                                    'PLAYGROUND'
-                                                                                    ),
-                                                                                '@',
-                                                                                'AT'
-                                                                                ),
-                                                                            'HSES',
-                                                                            'HOUSES'
-                                                                            ),
-                                                                        ' GROUP 1 |\(GROUP 1 ',
-                                                                        ' (GROUP 1) '
-                                                                        ),
-                                                                    ' PK',
-                                                                    ' PARK'
-                                                                    ),
-                                                                'STA ',
-                                                                'STATION '
-                                                                ),
-                                                            'LIBR ',
-                                                            'LIBRARY '
-                                                            ),
-                                                        'INDUST PK|IND. PARK',
-                                                        'INSUSTRIAL PARK'
-                                                        ),
-                                                    'PCT |PCT. ',
-                                                    'PRECINCT '
-                                                    ),
-                                                'N.Y.C.P.D.',
-                                                'NYPD'
-                                                ),
-                                            'F.H.A..|F.H.A. ',
-                                            'FHA '
+	REGEXP_REPLACE(
+		REGEXP_REPLACE(
+		    REGEXP_REPLACE(
+		        REGEXP_REPLACE(
+		            REGEXP_REPLACE(
+		                REGEXP_REPLACE(
+		                    REGEXP_REPLACE(
+		                        REGEXP_REPLACE(
+		                            REGEXP_REPLACE(
+		                                REGEXP_REPLACE(
+		                                    REGEXP_REPLACE(
+		                                        REGEXP_REPLACE(
+		                                            REGEXP_REPLACE(
+		                                                REGEXP_REPLACE(
+		                                                    REGEXP_REPLACE(
+		                                                        REGEXP_REPLACE(
+		                                                            REGEXP_REPLACE(
+		                                                                REGEXP_REPLACE(
+		                                                                    REGEXP_REPLACE(
+		                                                                        REGEXP_REPLACE(
+		                                                                            REGEXP_REPLACE(
+		                                                                                REGEXP_REPLACE(
+		                                                                                    REGEXP_REPLACE(
+		                                                                                        REGEXP_REPLACE(
+		                                                                                            REGEXP_REPLACE(TRIM(parcel_name)||' ', 
+		                                                                                            ' & ', 
+		                                                                                            ' AND '
+		                                                                                            ), 
+		                                                                                        'PLAYLOT|PLGD|PLAYGRD|PLAYGND|PLYGRND|PLYGD|PLAYGRND|PLYGRD|PLGRD|PLGD.|PLYGD|PLAYGD', 
+		                                                                                        'PLAYGROUND'
+		                                                                                        ),
+		                                                                                    '@',
+		                                                                                    'AT'
+		                                                                                    ),
+		                                                                                'HSES',
+		                                                                                'HOUSES'
+		                                                                                ),
+		                                                                            ' \(GROUP 1 ',
+		                                                                            ' (GROUP 1) '
+		                                                                            ),
+		                                                                        ' PK',
+		                                                                        ' PARK'
+		                                                                        ),
+		                                                                    'STA ',
+		                                                                    'STATION '
+		                                                                    ),
+		                                                                'LIBR ',
+		                                                                'LIBRARY '
+		                                                                ),
+		                                                            'INDUST PK|IND. PARK',
+		                                                            'INSUSTRIAL PARK'
+		                                                            ),
+		                                                        'PCT |PCT. ',
+		                                                        'PRECINCT '
+		                                                        ),
+		                                                    'N.Y.C.P.D.|NYCPD',
+		                                                    'NYPD'
+		                                                    ),
+		                                                'F.H.A..',
+		                                                'FHA '
+		                                                ),
+		                                            'GDN |GARD ',
+		                                            'GARDEN '
+		                                            ),
+	                                            'AVE\)|AVE.\)',
+	                                            'AVENUE)'
+	                                            ),
+                                            '\(AVE|\(AVE.',
+                                            '(AVENUE'
                                             ),
-                                        'GDN |GARD ',
-                                        'GARDEN '
+                                        ' AVE | AVE. | AVE- | AVE. | AV ',
+                                        ' AVENUE '
                                         ),
-                                    'AVE |AVE. |AVE- ',
-                                    'AVENUE '
+                                    'HUNTS%POINT%AVENUE%REHAB',
+                                    'HUNTS POINT AVENUE REHAB'
                                     ),
-                                'HUNTS%POINT%AVENUE%REHAB',
-                                'HUNTS POINT AVENUE REHAB'
+                                'AUTH ',
+                                'AUTHORITY '
                                 ),
-                            'AUTH ',
-                            'AUTHORITY '
+                            'BK|BKLYN',
+                            'BROOKLYN'
                             ),
-                        'BK|BKLYN',
-                        'BROOKLYN'
+                        'BX |BRNX ',
+                        'BRONX '
                         ),
-                    'BX |BRNX ',
-                    'BRONX '
+                    'QNS ',
+                    'QUEENS '
                     ),
-                'QNS ',
-                'QUEENS '
+                ' SI ',
+                ' STATEN ISLAND '
                 ),
-            ' SI ',
-            ' STATEN ISLAND '
+            'MN |MANH ',
+            'MANHATTAN '
             ),
-        'MN ',
-        'MANHATTAN '
-        ),
-    '\(JOP ',
-    '(JOP)'
+    'REHABS\(|REHAB\(',
+    'REHAB ('
     ),
-'REHABS\(ANDERSON',
-'REHABS ANDERSON'
+'REHABS|REHAS',
+'REHAB'
 )) as new_name,
 parcel_name as old_name
 FROM dcas_ipis)

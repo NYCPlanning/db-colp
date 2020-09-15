@@ -102,7 +102,7 @@ geo_merge as (
         -- Include address from source data
         a.house_number as _hnum,
         a.street_name as _sname,
-        a.parcel_name as name,
+        a.parcel_name as _name,
         a.agency,
         -- Create temp use code field, without 1900 cleaning
         (LPAD(split_part(a.primary_use_code::text, '.', 1), 4, '0')) as _usecode,
@@ -178,6 +178,15 @@ pluto_merge AS (
     ON a.bbl::text = b.bbl::text
 ),
 
+normed_name_merge as (
+    SELECT
+        a.*,
+        b.new_name as name
+    FROM pluto_merge a
+    JOIN dcas_ipis_parcel_names b
+    ON a._name = b.old_name
+),
+
 categorized as (
     SELECT 
         a.*,
@@ -234,7 +243,7 @@ categorized as (
                 OR a._usecode = '1400'THEN '9'
             ELSE NULL
         END) as expandcat
-    FROM pluto_merge a
+    FROM normed_name_merge a
 )
 
 -- Reorder columns for output

@@ -26,74 +26,74 @@ TRIM(
 		                                                                                REGEXP_REPLACE(
 		                                                                                    REGEXP_REPLACE(
 		                                                                                        REGEXP_REPLACE(
-		                                                                                            REGEXP_REPLACE(TRIM(parcel_name)||' ', 
-		                                                                                            ' & ', 
+		                                                                                            REGEXP_REPLACE(' '||TRIM(parcel_name)||' ', 
+		                                                                                            '\s&\s|&', 
 		                                                                                            ' AND '
 		                                                                                            ), 
-		                                                                                        'PLAYLOT|PLGD|PLAYGRD|PLAYGND|PLYGRND|PLYGD|PLAYGRND|PLYGRD|PLGRD|PLGD.|PLYGD|PLAYGD', 
-		                                                                                        'PLAYGROUND'
+		                                                                                        'PLAYLOT\s|PLGD\s|PLAYGRD\s|PLGRD\s|PLAYGND\s|PLYGRND/|PLYGRND\s|PLYGD\s|PLAYGRND\s|PLYGRD\s|PLYGRD/|PLGRD/|PLGRD\s|PLGD.\s|PLGD\s|PLYGD/|PLYGD|PLYGD\s|PLAYGD\s|PLGD/|PLGD-|PLAYGND-', 
+		                                                                                        'PLAYGROUND '
 		                                                                                        ),
-		                                                                                    '@',
+		                                                                                    '\@',
 		                                                                                    'AT'
 		                                                                                    ),
 		                                                                                'HSES',
 		                                                                                'HOUSES'
 		                                                                                ),
-		                                                                            ' \(GROUP 1 ',
-		                                                                            ' (GROUP 1) '
+		                                                                            '\s\(GROUP 1\s',
+		                                                                            '\s(GROUP 1)\s'
 		                                                                            ),
-		                                                                        ' PK',
-		                                                                        ' PARK'
+		                                                                        '\sPK\s|\sPK-',
+		                                                                        ' PARK '
 		                                                                        ),
-		                                                                    'STA ',
+		                                                                    'STA\s',
 		                                                                    'STATION '
 		                                                                    ),
-		                                                                'LIBR ',
+		                                                                'LIBR\s',
 		                                                                'LIBRARY '
 		                                                                ),
-		                                                            'INDUST PK|IND. PARK',
+		                                                            'INDUST\sPARK|IND\.\sPARK',
 		                                                            'INSUSTRIAL PARK'
 		                                                            ),
-		                                                        'PCT |PCT. ',
+		                                                        'PCT\s|PCT\.\s',
 		                                                        'PRECINCT '
 		                                                        ),
-		                                                    'N.Y.C.P.D.|NYCPD',
+		                                                    'N\.Y\.C\.P\.D\.|N\.Y\.P\.D\.|NYCPD',
 		                                                    'NYPD'
 		                                                    ),
-		                                                'F.H.A..',
+		                                                'F\.H\.A\.\.',
 		                                                'FHA '
 		                                                ),
-		                                            'GDN |GARD ',
+		                                            'GDN\s|GARD\s',
 		                                            'GARDEN '
 		                                            ),
-	                                            'AVE\)|AVE.\)',
+	                                            'AVE\)|AVE\.\)',
 	                                            'AVENUE)'
 	                                            ),
-                                            '\(AVE|\(AVE.',
+                                            '\(AVE|\(AVE\.',
                                             '(AVENUE'
                                             ),
-                                        ' AVE | AVE. | AVE- | AVE. | AV ',
+                                        '\sAVE\s|\sAVE\.\s|\sAVE-\s|\sAVE\.\s|\sAV\s',
                                         ' AVENUE '
                                         ),
                                     'HUNTS%POINT%AVENUE%REHAB',
                                     'HUNTS POINT AVENUE REHAB'
                                     ),
-                                'AUTH ',
+                                'AUTH\s',
                                 'AUTHORITY '
                                 ),
-                            'BK|BKLYN',
+                            'BKLN|BK|BKLYN',
                             'BROOKLYN'
                             ),
-                        'BX |BRNX ',
-                        'BRONX '
+                        '\sBX\s|\sBRNX\s|/BX\s|\sBX\.\s',
+                        ' BRONX '
                         ),
-                    'QNS ',
-                    'QUEENS '
+                    'QNS',
+                    'QUEENS'
                     ),
-                ' SI ',
+                '\sSI\s',
                 ' STATEN ISLAND '
                 ),
-            'MN |MANH ',
+            'MN\s|MAHN\s',
             'MANHATTAN '
             ),
     'REHABS\(|REHAB\(',

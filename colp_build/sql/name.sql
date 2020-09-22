@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS dcas_parcel_names;
+DROP TABLE IF EXISTS dcas_ipis_parcel_names;
 WITH compare AS(
 SELECT
 TRIM(
@@ -106,5 +106,5 @@ parcel_name as old_name
 FROM dcas_ipis)
 
 SELECT *
-INTO dcas_parcel_names
+INTO dcas_ipis_parcel_names
 FROM compare;

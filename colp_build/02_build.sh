@@ -9,7 +9,8 @@ docker run --rm\
     -e BUILD_ENGINE=$BUILD_ENGINE\
     nycplanning/docker-geosupport:latest bash -c "python3 python/normalize_addresses.py;
                                                 python3 python/geocode.py"
-
+                                                
+psql $BUILD_ENGINE -f sql/name.sql
 psql $BUILD_ENGINE -f sql/create_colp.sql
 psql $BUILD_ENGINE -f sql/addresses.sql
 

@@ -1,5 +1,10 @@
 DROP TABLE IF EXISTS dcas_ipis_parcel_names;
-WITH compare AS(
+WITH 
+distinct_names AS(
+	SELECT DISTINCT parcel_name
+	FROM dcas_ipis
+),
+compare AS(
 SELECT
 TRIM(
 	REGEXP_REPLACE(
@@ -103,7 +108,7 @@ TRIM(
 'REHAB'
 )) as new_name,
 parcel_name as old_name
-FROM dcas_ipis)
+FROM distinct_names)
 
 SELECT *
 INTO dcas_ipis_parcel_names

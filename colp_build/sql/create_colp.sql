@@ -158,7 +158,7 @@ address_merge AS (
             ELSE b.normalized_sname
     END) as address
     FROM geo_merge a
-    JOIN dcas_ipis_addresses b
+    LEFT JOIN dcas_ipis_addresses b
     ON a.bbl = b.dcas_bbl
     AND a._hnum = b.dcas_hnum
     AND a._sname = b.dcas_sname
@@ -183,7 +183,7 @@ normed_name_merge as (
         a.*,
         b.new_name as name
     FROM pluto_merge a
-    JOIN dcas_ipis_parcel_names b
+    LEFT JOIN dcas_ipis_parcel_names b
     ON a._name = b.old_name
 ),
 

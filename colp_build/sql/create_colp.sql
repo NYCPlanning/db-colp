@@ -44,6 +44,8 @@ INPUTS:
     dcas_ipis_geocodes (
         * input_bbl,
         bill_bbl,
+        longitude,
+        latitude,
         x_coord,
         y_coord
     )
@@ -137,6 +139,8 @@ geo_merge as (
         -- Add coordinates, mappable flag, and geometry from geocode.py results
         b.x_coord as xcoord,
         b.y_coord as ycoord,
+        b.latitude,
+        b.longitude,
         (CASE
             WHEN b.longitude IS NOT NULL AND b.longitude <> ''
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
@@ -282,27 +286,29 @@ categorized as (
 
 -- Reorder columns for output
 SELECT
-    borough,
-    block,
-    lot,
-    bbl,
-    billbbl,
-    cd,
-    hnum,
-    sname,
-    address,
-    name,
-    agency,
-    usecode,
-    usetype,
-    ownership,
-    category,
-    expandcat,
-    leased,
-    finalcom,
-    agreement,
-    xcoord,
-    ycoord,
-    geom
+    borough::varchar(2) as "BOROUGH",
+    trim(block)::numeric(10,0) as "BLOCK",
+    lot::numeric(5,0) as "LOT",
+    bbl::numeric(19,8) as "BBL",
+    billbbl::numeric(19,8) as "BILLBBL",
+    cd::numeric(5,0) as "CD",
+    hnum as "HNUM",
+    sname as "SNAME",
+    address as "ADDRESS",
+    name as "NAME",
+    agency as "AGENCY",
+    usecode as "USECODE",
+    usetype as "USETYPE",
+    ownership as "OWNERSHIP",
+    category as "CATEGORY",
+    expandcat as "EXPANDCAT",
+    leased as "LEASED",
+    finalcom as "FINALCOM",
+    agreement as "AGREEMENT",
+    round(xcoord::numeric)::numeric(10,0) as "XCOORD",
+    round(ycoord::numeric)::numeric(10,0) as "YCOORD",
+    latitude::numeric(19,7) as "LATITUDE",
+    longitude::numeric(19,7) as "LONGITUDE",
+    geom as "GEOM"
 INTO _colp
 FROM categorized;

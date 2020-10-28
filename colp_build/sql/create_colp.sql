@@ -44,6 +44,8 @@ INPUTS:
     dcas_ipis_geocodes (
         * input_bbl,
         bill_bbl,
+        longitude,
+        latitude,
         x_coord,
         y_coord
     )
@@ -135,6 +137,8 @@ geo_merge as (
             ELSE NULL 
         END) as agreement,
         -- Add coordinates, mappable flag, and geometry from geocode.py results
+        b.longitude,
+        b.latitude,
         b.x_coord as xcoord,
         b.y_coord as ycoord,
         (CASE
@@ -266,6 +270,8 @@ SELECT
     leased,
     finalcom,
     agreement,
+    longitude,
+    latitude,
     xcoord,
     ycoord,
     geom

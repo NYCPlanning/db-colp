@@ -252,12 +252,12 @@ categorized as (
 
 -- Reorder columns for output
 SELECT
-    borough as "BOROUGH",
-    block as "BLOCK",
-    lot as "LOT",
-    bbl as "BBL",
-    billbbl as "BILLBBL",
-    cd as "CD",
+    borough::varchar(2) as "BOROUGH",
+    trim(block)::numeric(10,0) as "BLOCK",
+    lot::numeric(5,0) as "LOT",
+    bbl::numeric(19,8) as "BBL",
+    billbbl::numeric(19,8) as "BILLBBL",
+    cd::numeric(5,0) as "CD",
     hnum as "HNUM",
     sname as "SNAME",
     address as "ADDRESS",
@@ -271,10 +271,10 @@ SELECT
     leased as "LEASED",
     finalcom as "FINALCOM",
     agreement as "AGREEMENT",
-    xcoord as "XCOORD",
-    ycoord as "YCOORD",
-    latitude as "LATITUDE",
-    longitude as "LONGITUDE",
+    round(xcoord::numeric)::numeric(10,0) as "XCOORD",
+    round(ycoord::numeric)::numeric(10,0) as "YCOORD",
+    latitude::numeric(19,7) as "LATITUDE",
+    longitude::numeric(19,7) as "LONGITUDE",
     geom as "GEOM"
 INTO _colp
 FROM categorized;

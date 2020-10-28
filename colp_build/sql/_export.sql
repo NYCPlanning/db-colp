@@ -15,5 +15,5 @@ SELECT a.*,
 INTO colp_unmapped
 FROM _colp a
 JOIN dcas_ipis_geocodes b
-ON a."BBL" = b.input_bbl
+ON a."BBL" = b.input_bbl::numeric(19,8)
 WHERE a."XCOORD" IS NULL;

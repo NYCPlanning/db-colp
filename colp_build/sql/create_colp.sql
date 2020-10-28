@@ -261,6 +261,7 @@ SELECT
     agency,
     usecode,
     usetype,
+    ownership,
     category,
     expandcat,
     leased,

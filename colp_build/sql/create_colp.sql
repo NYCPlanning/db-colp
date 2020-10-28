@@ -137,10 +137,10 @@ geo_merge as (
             ELSE NULL 
         END) as agreement,
         -- Add coordinates, mappable flag, and geometry from geocode.py results
-        b.longitude,
-        b.latitude,
         b.x_coord as xcoord,
         b.y_coord as ycoord,
+        b.latitude,
+        b.longitude,
         (CASE
             WHEN b.longitude IS NOT NULL AND b.longitude <> ''
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
@@ -270,10 +270,10 @@ SELECT
     leased,
     finalcom,
     agreement,
-    longitude,
-    latitude,
     xcoord,
     ycoord,
+    latitude,
+    longitude,
     geom
 INTO _colp
 FROM categorized;

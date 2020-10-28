@@ -13,12 +13,14 @@ mkdir -p output
     CSV_export colp_unmapped
     CSV_export address_comparison
     echo "[$(date)] $DATE" > version.txt
+
+    SHP_export $BUILD_ENGINE colp POINT colp
 )
 
 zip -r output/output.zip output
 
-# Upload latest &
-# Upload $DATE
+Upload latest &
+Upload $DATE
 
-# wait 
-# display "Upload Complete"
+wait 
+display "Upload Complete"

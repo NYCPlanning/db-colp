@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS colp;
 SELECT *
 INTO colp
 FROM _colp
-WHERE xcoord IS NOT NULL;
+WHERE "XCOORD" IS NOT NULL;
 
 DROP TABLE IF EXISTS colp_unmapped;
 SELECT a.*,
@@ -15,5 +15,5 @@ SELECT a.*,
 INTO colp_unmapped
 FROM _colp a
 JOIN dcas_ipis_geocodes b
-ON a.bbl = b.input_bbl
-WHERE a.xcoord IS NULL;
+ON a."BBL" = b.input_bbl
+WHERE a."XCOORD" IS NULL;

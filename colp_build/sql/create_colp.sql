@@ -261,6 +261,7 @@ SELECT
     agency as "AGENCY",
     usecode as "USECODE",
     usetype as "USETYPE",
+    ownership as "OWNERSHIP",
     category as "CATEGORY",
     expandcat as "EXPANDCAT",
     leased as "LEASED",

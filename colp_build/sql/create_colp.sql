@@ -253,18 +253,18 @@ categorized as (
                 OR a._usecode = '1310'
                 OR a._usecode = '1340'
                 OR a._usecode = '1341'
-                OR a._usecode = '1349' THEN 'Office Use'
-            WHEN a._usecode LIKE '02%' THEN 'Educational Use'
+                OR a._usecode = '1349' THEN 'OFFICE USE'
+            WHEN a._usecode LIKE '02%' THEN 'EDUCATIONAL USE'
             WHEN a._usecode LIKE '03%'
                 OR a._usecode LIKE '04%'
-                OR a._usecode = '1330' THEN 'Cultural & Recreational Use'
+                OR a._usecode = '1330' THEN 'CULTURAL & RECREATIONAL USE'
             WHEN a._usecode LIKE '05%' 
                 OR a._usecode LIKE '12%' 
-                OR a._usecode = '1390' THEN 'Public Safety & Criminal Justice Use'
+                OR a._usecode = '1390' THEN 'PUBLIC SAFETY & CRIMINAL JUSTICE USE'
             WHEN a._usecode LIKE '06%'
-                OR a._usecode LIKE '07%' THEN 'Health & Social Services Use'
+                OR a._usecode LIKE '07%' THEN 'HEALTH & SOCIAL SERVICES USE'
             WHEN a._usecode LIKE '19%'
-                OR a._usecode = '1342' THEN 'Leased Out to Private Tenant'
+                OR a._usecode = '1342' THEN 'LEASED OUT TO PRIVATE TENANT'
             WHEN a._usecode LIKE '08%'
                 OR a._usecode LIKE '09%'
                 OR a._usecode LIKE '10%'
@@ -274,11 +274,11 @@ categorized as (
                 OR a._usecode = '1350'
                 OR a._usecode = '1360'
                 OR a._usecode = '1370'
-                OR a._usecode = '1380' THEN 'Maintenance, Storage, & Infrastructure Use'
+                OR a._usecode = '1380' THEN 'MAINTENANCE, STORAGE, & INFRASTRUCTURE USE'
             WHEN a._usecode LIKE '15%'
-                OR a._usecode = '1420' THEN 'Property with No Use'
+                OR a._usecode = '1420' THEN 'PROPERTY WITH NO USE'
             WHEN a._usecode = '1410' 
-                OR a._usecode = '1400'THEN 'Property with Residential Use'
+                OR a._usecode = '1400'THEN 'PROPERTY WITH RESIDENTIAL USE'
             ELSE NULL
         END) as excatdesc
     FROM normed_name_merge a
@@ -302,6 +302,7 @@ SELECT
     ownership as "OWNERSHIP",
     category as "CATEGORY",
     expandcat as "EXPANDCAT",
+    excatdesc as "EXCATDESC",
     leased as "LEASED",
     finalcom as "FINALCOM",
     agreement as "AGREEMENT",

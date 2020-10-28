@@ -242,7 +242,41 @@ categorized as (
             WHEN a._usecode = '1410' 
                 OR a._usecode = '1400'THEN '9'
             ELSE NULL
-        END) as expandcat
+        END) as expandcat,
+        -- Parse use codes to create expanded category descriptions
+        (CASE
+            WHEN a._usecode LIKE '01%' 
+                OR a._usecode = '1310'
+                OR a._usecode = '1340'
+                OR a._usecode = '1341'
+                OR a._usecode = '1349' THEN 'Office Use'
+            WHEN a._usecode LIKE '02%' THEN 'Educational Use'
+            WHEN a._usecode LIKE '03%'
+                OR a._usecode LIKE '04%'
+                OR a._usecode = '1330' THEN 'Cultural & Recreational Use'
+            WHEN a._usecode LIKE '05%' 
+                OR a._usecode LIKE '12%' 
+                OR a._usecode = '1390' THEN 'Public Safety & Criminal Justice Use'
+            WHEN a._usecode LIKE '06%'
+                OR a._usecode LIKE '07%' THEN 'Health & Social Services Use'
+            WHEN a._usecode LIKE '19%'
+                OR a._usecode = '1342' THEN 'Leased Out to Private Tenant'
+            WHEN a._usecode LIKE '08%'
+                OR a._usecode LIKE '09%'
+                OR a._usecode LIKE '10%'
+                OR a._usecode LIKE '11%' 
+                OR a._usecode = '1312'
+                OR a._usecode = '1313'
+                OR a._usecode = '1350'
+                OR a._usecode = '1360'
+                OR a._usecode = '1370'
+                OR a._usecode = '1380' THEN 'Maintenance, Storage, & Infrastructure Use'
+            WHEN a._usecode LIKE '15%'
+                OR a._usecode = '1420' THEN 'Property with No Use'
+            WHEN a._usecode = '1410' 
+                OR a._usecode = '1400'THEN 'Property with Residential Use'
+            ELSE NULL
+        END) as excatdesc
     FROM normed_name_merge a
 )
 

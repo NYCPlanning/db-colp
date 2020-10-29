@@ -310,6 +310,6 @@ SELECT
     round(ycoord::numeric)::numeric(10,0) as "YCOORD",
     latitude::numeric(19,7) as "LATITUDE",
     longitude::numeric(19,7) as "LONGITUDE",
-    geom as "GEOM"
+    ST_Transform(geom, 2263) as "GEOM"
 INTO _colp
 FROM categorized;

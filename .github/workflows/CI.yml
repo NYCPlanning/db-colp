@@ -8,6 +8,7 @@ jobs:
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       BUILD_ENGINE: ${{ secrets.BUILD_ENGINE }}
+      EDM_DATA: ${{ secrets.EDM_DATA }} 
     steps:
     - uses: actions/checkout@v2
     - name: dataloading ...

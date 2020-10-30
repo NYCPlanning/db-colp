@@ -3,6 +3,7 @@
 ## 2020/10/30 -- Molly
 + Test building through github actions after refactor
 + Retest after adding missing secrets
++ Try again on self-hosted runner
 
 ## 2020/04/23 -- Molly
 + Test building through github actions

@@ -1,5 +1,8 @@
 # Build Logs
 
+## 2020/10/30 -- Molly
++ Test building through github actions after refactor
+
 ## 2020/04/23 -- Molly
 + Test building through github actions
 

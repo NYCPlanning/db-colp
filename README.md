@@ -4,6 +4,17 @@ Various city authorities own or lease a large inventory of properties. This repo
 
 The input data for COLP is the Integrated Property Information System (IPIS), a real estate database maintained by the Department of Citywide Administrative Services (DCAS).
 
+## Outputs
+| File | Description |
+| ---- | ----------- |
+| [colp.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.zip) | Shapefile version COLP database, only including records with coordinates |
+| [colp.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.csv) | CSV version COLP database, only including records with coordinates |
+| [colp_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp_unmapped.csv) | Records from COLP that did not successfully geocode, along with error messages from Geosupport |
+| [address_comparison.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/address_comparison.csv) | Comparison of addresses between DCAS IPIS form, normalized form, and addresses returned by geocoding on BBL |
+| [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Versions of the input data |
+| [All files](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/output.zip) | All outputs in a compressed directory |
+
+
 ## Building COLP
 To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/log.md), then commit with **`[build]`** in the commit message. More detailed intructions for building COLP are contained in [`maintenance/instructions.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/instructions.md).
 

@@ -8,17 +8,23 @@ jobs:
     env:
       RECIPE_ENGINE: ${{ secrets.RECIPE_ENGINE }}
       BUILD_ENGINE: ${{ secrets.BUILD_ENGINE }}
-      EDM_DATA: ${{ secrets.EDM_DATA }} 
+      EDM_DATA: ${{ secrets.EDM_DATA }}
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
     steps:
     - uses: actions/checkout@v2
-    - name: dataloading ...
+    - name: Dataloading ...
       working-directory: colp_build
       shell: bash
       run: ./01_dataloading.sh
-    - name: install update ...
+    - name: Install updates ...
       run: |
         sudo apt update
         sudo apt install -y postgresql-client-common
-    - name: run build ...
+    - name: Build COLP ...
       working-directory: colp_build
       run: ./02_build.sh
+    - name: Create exports and upload to s3 ...
+      working-directory: colp_build
+      run: ./03_export.sh

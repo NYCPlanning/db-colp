@@ -2,6 +2,7 @@
 
 ## 2020/11/02 -- Molly
 + Include export step
++ Test clean-up step
 
 ## 2020/10/30 -- Molly
 + Test building through github actions after refactor

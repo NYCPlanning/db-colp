@@ -1,5 +1,8 @@
 # Build Logs
 
+## 2020/11/02 -- Molly
++ Include export step
+
 ## 2020/10/30 -- Molly
 + Test building through github actions after refactor
 + Retest after adding missing secrets

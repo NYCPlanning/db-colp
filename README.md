@@ -19,42 +19,167 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/log.md), then commit with **`[build]`** in the commit message. More detailed intructions for building COLP are contained in [`maintenance/instructions.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/instructions.md).
 
 ## Data Dictionary
-As this version of the COLP database is currently in development, the output schema is not yet stable.
 
-+ `borough`: Numeric borough code
-+ `block`: Tax block
-+ `lot`: Tax lot
-+ `cd`: Three-digit community district, with borough code as the first digit
-+ `hnum`: Building number portion of property address
-+ `street`: Street portion of property address
-+ `parcel`: Parcel name, where exists
-+ `agency`: Code for owning/leasing agency
-+ `use_code`: Four-digit use-code derived from IPIS
-+ `use_type`: Description associated with use-code
-+ `ownership`: Ownership type
-    + C: City-owned
-    + P: Privately owned
-    + M: Mixed (either 'C' & 'P' or 'C' & 'O')
-    + O: Other public agencies/authorities
-+ `leased`: Flag indicating whether the property is owned or leased
-    + O: Owned
-    + L: Leased
-+ `final_commit`: Flag indicating whether the property is a disposition
-+ `agreement`: Agreement type
-    + L: Long-term
-    + S: Short-term
-    + M: Mixed
-+ `category_code`:
-    + 1: Other
-    + 2: Residential use
-    + 3: No current use
-+ `expanded_cat_code`:
-    + 1: Offices
-    + 2: Educational facilities
-    + 3: Recreational & cultural facilities
-    + 4: Public safety and judicial
-    + 5: Health & social services
-    + 6: Tenented & retail
-    + 7: Transportation & infrastructure
-    + 8: Not in use
-    + 9: In-use residential
+`BOROUGH`
++ **Longform name:** Borough 
++ **Description:** NYC borough – 1 (Manhattan), 2 (Bronx), 3 (Brooklyn), 4 (Queens), 5 (Staten Island) 
++ **Data type:** `text`  
++ **Example:** 1 
+
+`BLOCK`
++ **Longform name:** Tax block     
++ **Description:** The tax block in which the tax lot is located. Each tax block is unique within a borough. 
++ **Data type:** `int`
++ **Example:** 1637 
+
+`LOT`
++ **Longform name:** Tax lot     
++ **Description:** The number of the tax lot. Each tax lot is unique within a tax block. 
++ **Data type:** `int`     
++ **Example:** 141 
+
+`BBL`
++ **Longform name:** BBL  
++ **Description:** Borough, block and lot number. For condominiums, this is usually the unit BBL. 
++ **Data type:** `double` 
++ **Example:** 1016370141 
+
+`BILLBBL` 
++ **Longform name:** Billing BBL 
++ **Data source:** Department of City Planning 
++ **Description:** This field consists of the borough code followed by the tax block followed by the tax lot. For condominiums, this is the “7500” record. For non-condo lots, it is the same as BBL. The billing BBL matches that used for MapPLUTO. 
++ **Data type:** `double` 
++ **Example:** 1016370141 
+
+`CD` 
++ **Longform name:** Community district   
++ **Data source:** Department of City Planning 
++ **Description:** The community district or joint interest area for the tax lot. The city is divided into 59 community districts and 12 joint interest areas, which are large parks or airports that are not considered part of any community district. This field consists of three digits, the first of which is the borough code. The second and third digits are the community district or joint interest area number, whichever is applicable. 
++ **Data type:** `int` 
++ **Example:** 111 
+
+`HNUM`
++ **Longform name:** House number        
++ **Description:** House number 
++ **Data type:** `text` 
++ **Example:** 1955 
+
+`SNAME` 
++ **Longform name:** Street name         
++ **Description:** Name of the street 
++ **Data type:** `text`
++ **Example:** Third Avenue 
+
+`NAME`
++ **Longform name:** Parcel name 
++ **Description:** Name of the parcel or facility on the lot     
++ **Data type:** `text`
++ **Example:** AGUILAR BRANCH LIBRARY 
+
+`AGENCY` 
++ **Longform name:** Agency   
++ **Description:** Abbreviation for agency using the lot. See appendix A for a list of abbreviations with their full name. 
++ **Data type:** `text`
++ **Example:** NYPL 
+
+`USECODE`
++ **Longform name:** Use code 
++ **Description:** The use code indicates how the lot is being used by the agency. See Appendix B for a complete list of use codes and descriptions. 
++ **Data type:** `text`
++ **Example:** 0332 
+
+`USETYPE`
++ **Longform name:** Use description  
++ **Description:** Description of how the lot is being used by the agency. See Appendix B for a complete list of use codes and descriptions. 
++ **Data type:** `text` 
++ **Example:** BRANCH LIBRARY 
+
+`OWNERSHIP` 
++ **Longform name:** Owner type 
++ **Description:** Type of owner 
++ **Data type:** `text` 
++ **Values:**
+   + C – City owned 
+   + M – Mixed ownership 
+   + P – Private 
+   + O – Other/public authority (includes properties owned by federal and state entities) 
+
+`CATEGORY`
++ **Longform name:** Category     
++ **Description:** Category classifies lots as non-residential properties with a current use, residential properties, or properties without a current use.  
++ **Data type:** `int` 
++ **Values:**
+   + 1 – Non-residential properties with a current use 
+   + 2 – Residential properties 
+   + 3 – Properties with no current use  
+
+`EXPANDCAT`
++ **Longform name:** Expanded category 
++ **Data source:** Department of City Planning 
++ **Description:** This categorization classifies records into broad groups based on use. Valid values are 1 – 9. 
++ **Data type:** `int` 
++ **Description of values:**
+    + 1 – Office use 
+    + 2 – Educational use 
+    + 3 – Cultural & recreational use 
+    + 4 – Public safety & criminal justice use 
+    + 5 – Health & social service use 
+    + 6 – Leased out to a private tenant 
+    + 7 – Maintenance, storage & infrastructure 
+    + 8 – Property with no use 
+    + 9 – Property with a residential used 
+
+`EXCATDESC`
++ **Longform name:** Expanded category description 
++ **Data source:** Department of City Planning 
++ **Description:** Descriptions for the expanded category values. See EXPANDCAT for the domain values. 
++ **Data type:** `text` 
+
+`LEASED`
++ **Longform name:** Leased 
++ **Description:** A value of “L” indicates that the agency’s use of the property is through a lease. Note there may be cases where the value in LEASED appears to contradict the value in OWNERSHIP. For example, a city-owned lot may be leased out to a private entity and then the City may lease in some of the space for agency use. In that case, OWNERSHIP = “C” and LEASED = “L”. The City may have use of privately-owned lots without a lease. For example, the lots underneath the High Line are privately owned and the City has a permanent easement for using the overhead structure as a park. For these lots, OWNERSHIP = “P” and LEASED is blank. For questions about the status of specific lots, please contact DCAS at (212) 386-0622 or RESPlanning311@dcas.nyc.gov. 
++ **Data type:** `text` 
++ **Values:** L or blank 
+
+`FINALCOM` 
++ **Longform name:** Final commitment     
++ **Description:** This field equals D if the property has been approved for disposition, i.e., the city has permission to sell the property. 
++ **Data type:** `text` 
++ **Values:** D or blank 
+
+`AGREEMENT`
++ **Longform name:** Lease agreement 
++ **Description:** For city owned properties that are leased to another entity, this field indicates whether the lease is short-term, long-term, or mixed short and long term. 
++ **Data type:** text 
++ **Values:**
+   + S – Short term 
+   + L – Long term 
+   + M – Mixed (there are both short and long term leases on the property) 
+
+`XCOORD` 
++ **Longform name:** X coordinate  
++ **Data source:** Department of City Planning 
++ **Description:** X coordinate based on the Geosupport label point for the billing BBL. Coordinate system is NAD 1983 State Plane New York Long Island FIPS 3104 Feet. 
++ **Data type:** `int` 
++ **Example:** 999900 
+
+`YCOORD`
++ **Longform name:** Y coordinate  
++ **Data source:** Department of City Planning 
++ **Description:** Y coordinate based on the Geosupport label point for the billing BBL. Coordinate system is NAD 1983 State Plane New York Long Island FIPS 3104 Feet. 
++ **Data type:** `int` 
++ **Example:** 228619 
+
+`LATITUDE` 
++ **Longform name:** Latitude  
++ **Data source:** Department of City Planning 
++ **Description:** Latitude based on the Geosupport label point for the billing BBL. Coordinate system is NAD_1983. 
++ **Data type:** double 
++ **Example:** 40.794169 
+
+`LONGITUDE` 
++ **Longform name:** Longitude  
++ **Data source:** Department of City Planning 
++ **Description:** Longitude based on the Geosupport label point for the billing BBL. Coordinate system is NAD_1983. 
++ **Data type:** double 
++ **Example:** -73.943479

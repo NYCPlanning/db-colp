@@ -6,6 +6,7 @@ START=$(date +%s);
 docker run --rm\
     -v `pwd`:/home/colp_build\
     -w /home/colp_build\
+    -u $(id -u ${USER}):$(id -g ${USER}) \
     -e BUILD_ENGINE=$BUILD_ENGINE\
     nycplanning/docker-geosupport:latest bash -c "python3 python/normalize_addresses.py;
                                                 python3 python/geocode.py"

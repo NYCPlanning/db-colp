@@ -23,4 +23,4 @@ Upload latest &
 Upload $DATE
 
 wait 
-display "Upload Complete"
+echo "Upload Complete"

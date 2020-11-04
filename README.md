@@ -14,6 +14,8 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Versions of the input data |
 | [All files](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/output.zip) | All outputs in a compressed directory |
 
+## Additional Resources
+Look-up tables for agency abbreviations and use types are availaible in CSV form under [`/resources`](https://github.com/NYCPlanning/db-colp/tree/master/resources)
 
 ## Building COLP
 To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/log.md), then commit with **`[build]`** in the commit message. More detailed intructions for building COLP are contained in [`maintenance/instructions.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/instructions.md).

@@ -1,5 +1,9 @@
 # Build Logs
 
+## 2020/11/09 -- Molly
++ Fix geocoding to take BL results if no coordinates are returned from 1B
++ Replace SFHZ with PRIV
+
 ## 2020/11/02 -- Molly
 + Include export step
 + Test clean-up step

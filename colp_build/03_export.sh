@@ -10,6 +10,7 @@ mkdir -p output
 
     echo "Exporting COLP"
     CSV_export colp
+    CSV_export unmapped_airrights
     CSV_export colp_unmapped
     CSV_export address_comparison
     echo "[$(date)] $DATE" > version.txt

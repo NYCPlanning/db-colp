@@ -105,7 +105,10 @@ geo_merge as (
         a.house_number as _hnum,
         a.street_name as _sname,
         a.parcel_name as _name,
-        a.agency,
+        (CASE 
+            WHEN a.agency = 'SFHZ' THEN 'PRIV' 
+            ELSE a.agency 
+        END) as agency,
         -- Create temp use code field, without 1900 cleaning
         (LPAD(split_part(a.primary_use_code::text, '.', 1), 4, '0')) as _usecode,
         -- Create temp use type field, without 1900 cleaning

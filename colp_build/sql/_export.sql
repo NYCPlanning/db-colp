@@ -4,6 +4,13 @@ INTO colp
 FROM _colp
 WHERE "XCOORD" IS NOT NULL;
 
+DROP TABLE IF EXISTS unmapped_airrights;
+SELECT *
+INTO unmapped_airrights
+FROM _colp
+WHERE "XCOORD" IS NULL
+AND LEFT("LOT"::text, 1) = '9';
+
 DROP TABLE IF EXISTS colp_unmapped;
 SELECT a.*,
     b.geo_function,

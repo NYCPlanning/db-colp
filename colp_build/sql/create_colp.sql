@@ -66,12 +66,13 @@ OUTPUTS:
         hnum,
         sname,
         address,
-        name,
+        parcelname,
         agency,
         usecode,
         usetype,
         category,
         expandcat,
+        excatdesc,
         leased,
         finalcom,
         agreement,
@@ -104,7 +105,7 @@ geo_merge as (
         -- Include address from source data
         a.house_number as _hnum,
         a.street_name as _sname,
-        a.parcel_name as _name,
+        a.parcel_name as _parcelname,
         (CASE 
             WHEN a.agency = 'SFHZ' THEN 'PRIV' 
             ELSE a.agency 
@@ -188,10 +189,10 @@ pluto_merge AS (
 normed_name_merge as (
     SELECT
         a.*,
-        b.new_name as name
+        b.new_name as parcelname
     FROM pluto_merge a
     LEFT JOIN dcas_ipis_parcel_names b
-    ON a._name = b.old_name
+    ON a._parcelname = b.old_name
 ),
 
 categorized as (
@@ -298,7 +299,7 @@ SELECT
     hnum::varchar(20) as "HNUM",
     sname::varchar(40) as "SNAME",
     address as "ADDRESS",
-    name as "NAME",
+    parcelname as "PARCELNAME",
     agency::varchar(20) as "AGENCY",
     usecode::varchar(4) as "USECODE",
     usetype as "USETYPE",

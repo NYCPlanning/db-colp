@@ -56,16 +56,25 @@ def geocode(inputs):
         if len(ideal_addresses) == 0:
             ideal_addresses = [d for d in addresses if d['5-Digit Street Code'] != '']
 
-        address = ideal_addresses[0]
+        address = ideal_addresses[0] if len(ideal_addresses) > 0 else {}
 
         # Use boro and 5sc to translate into sname
         b5sc = address.get('Borough Code', '0')+address.get('5-Digit Street Code', '00000')
         sname = get_sname(b5sc)
         hnum = address.get('Low House Number', '')
 
-    except:
+        # Parse BL call outputs
+        geo_bl = parse_output(geo_bl)
+        geo_bl.update(input_bbl=bbl, input_hnum='', input_sname='', geo_function='BL')
+        geo_bl['hnum'] = hnum
+        geo_bl['sname'] = sname
+
+    except GeosupportError as e1:
         hnum = ''
         sname = ''
+        geo = parse_output(e1.result)
+        geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='BL')
+        return geo
 
     # Run address returned from BL through functions 1A and 1B.
     try:
@@ -78,15 +87,14 @@ def geocode(inputs):
             geo = g['1B'](street_name=sname, house_number=hnum, borough=borough, mode='regular')
             geo = parse_output(geo)
             geo.update(input_bbl=bbl, input_hnum=hnum, input_sname=sname, geo_function='1B')
-            return geo
+            # If 1B succeeded but did not return coordinates, use BL results
+            if geo['latitude'] == '' and geo['longitude'] == '':
+                return geo_bl
+            else:
+                return geo
         except GeosupportError as e1:
             # Return BL results calculated previously, since no better results were found
-            try:
-                # Update BL results with desired fields for output
-                geo_bl = parse_output(geo_bl)
-                geo_bl.update(input_bbl=bbl, input_hnum='', input_sname='', geo_function='BL')
-                geo_bl['hnum'] = hnum
-                geo_bl['sname'] = sname
+            try:        
                 return geo_bl
             except:
                 # Output most recent geosupport error (1B) for research

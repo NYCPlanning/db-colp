@@ -9,7 +9,7 @@ SELECT *
 INTO unmapped_airrights
 FROM _colp
 WHERE "XCOORD" IS NULL
-AND LEFT("LOT"::text, 1) = '9';
+AND LEFT("LOT"::text, 1) = '9' AND LENGTH("LOT"::text) = 4;
 
 DROP TABLE IF EXISTS colp_unmapped;
 SELECT a.*,

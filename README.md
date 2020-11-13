@@ -42,21 +42,21 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 
 `BBL`
 + **Longform name:** BBL  
-+ **Description:** Borough, block and lot number. For condominiums, this is usually the unit BBL. 
++ **Description:** 10-digit identifier for a tax lot, consisting of the borough code followed by the tax block followed by the tax lot. The borough code is one numeric digit. The tax block is one to five numeric digits, preceded with leading zeros when the block is less than five digits. The tax lot is one to four digits and is preceded with leading zeros when the lot is less than four digits. For condominiums, this is usually the unit BBL. 
 + **Data type:** `double` 
 + **Example:** 1016370141 
 
 `BILLBBL` 
 + **Longform name:** Billing BBL 
 + **Data source:** Department of City Planning 
-+ **Description:** This field consists of the borough code followed by the tax block followed by the tax lot. For condominiums, this is the “7500” record. For non-condo lots, it is the same as BBL. The billing BBL matches that used for MapPLUTO. 
++ **Description:** For condominium lots, the billing BBL is the 75nn-series record shown on the tax map and in MapPLUTO. It is generally associated with the condominium management organization. For non-condo lots, BILLBBL is the same as BBL. 
 + **Data type:** `double` 
 + **Example:** 1016370141 
 
 `CD` 
 + **Longform name:** Community district   
 + **Data source:** Department of City Planning 
-+ **Description:** The community district or joint interest area for the tax lot. The city is divided into 59 community districts and 12 joint interest areas, which are large parks or airports that are not considered part of any community district. This field consists of three digits, the first of which is the borough code. The second and third digits are the community district or joint interest area number, whichever is applicable. 
++ **Description:** The community district or joint interest area for the tax lot. The city is divided into 59 community districts and 12 joint interest areas, which are large parks or airports that are not considered part of any community district. This field consists of three digits, the first of which is the borough code. The second and third digits are the community district or joint interest area number, whichever is applicable.
 + **Data type:** `int` 
 + **Example:** 111 
 
@@ -134,24 +134,24 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 `EXCATDESC`
 + **Longform name:** Expanded category description 
 + **Data source:** Department of City Planning 
-+ **Description:** Descriptions for the expanded category values. See EXPANDCAT for the domain values. 
++ **Description:** Descriptions for the expanded category values. See `EXPANDCAT` for the domain values. 
 + **Data type:** `text` 
 
 `LEASED`
 + **Longform name:** Leased 
-+ **Description:** A value of “L” indicates that the agency’s use of the property is through a lease. Note there may be cases where the value in LEASED appears to contradict the value in OWNERSHIP. For example, a city-owned lot may be leased out to a private entity and then the City may lease in some of the space for agency use. In that case, OWNERSHIP = “C” and LEASED = “L”. The City may have use of privately-owned lots without a lease. For example, the lots underneath the High Line are privately owned and the City has a permanent easement for using the overhead structure as a park. For these lots, OWNERSHIP = “P” and LEASED is blank. For questions about the status of specific lots, please contact DCAS at (212) 386-0622 or RESPlanning311@dcas.nyc.gov. 
++ **Description:** A value of “L” indicates that the agency’s use of the property is authorized through a lease. For questions about the lease or ownership status of specific lots, please contact DCAS at (212) 386-0622 or RESPlanning311@dcas.nyc.gov.
 + **Data type:** `text` 
 + **Values:** L or blank 
 
 `FINALCOM` 
 + **Longform name:** Final commitment     
-+ **Description:** This field equals D if the property has been approved for disposition, i.e., the city has permission to sell the property. 
++ **Description:** A value of “D” indicates potential disposition by the City.  
 + **Data type:** `text` 
 + **Values:** D or blank 
 
 `AGREEMENT`
 + **Longform name:** Lease agreement 
-+ **Description:** For city owned properties that are leased to another entity, this field indicates whether the lease is short-term, long-term, or mixed short and long term. 
++ **Description:** For City-owned properties that are leased to another entity, this field indicates whether the agreement is short-term, long-term, or there are both short- and long-term agreements present.
 + **Data type:** text 
 + **Values:**
    + S – Short term 
@@ -185,3 +185,8 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 + **Description:** Longitude based on the Geosupport label point for the billing BBL. Coordinate system is NAD_1983. 
 + **Data type:** double 
 + **Example:** -73.943479
+
+`GEOM`
++ **Longform name:** Geometry
++ **Description:** Point geometry type
++ **Data type:** geometry

@@ -1,5 +1,8 @@
 # Build Logs
 
+## 2020/11/20 -- Molly
++ Try to rerun to get corrected air rights table to overwrite version in s3
+
 ## 2020/11/10 -- Molly
 + Apply corrections from DCAS
 + Extract air rights records from unmapped_colp in the same schema as colp

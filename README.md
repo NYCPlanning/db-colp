@@ -9,6 +9,7 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | ---- | ----------- |
 | [colp.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.zip) | Shapefile version COLP database, only including records with coordinates |
 | [colp.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.csv) | CSV version COLP database, only including records with coordinates |
+| [unmapped_airrights.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/unmapped_airrights.csv) |Records from COLP that did not successfully geocode because they are 9000 series lots |
 | [colp_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp_unmapped.csv) | Records from COLP that did not successfully geocode, along with error messages from Geosupport |
 | [address_comparison.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/address_comparison.csv) | Comparison of addresses between DCAS IPIS form, normalized form, and addresses returned by geocoding on BBL |
 | [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Versions of the input data |

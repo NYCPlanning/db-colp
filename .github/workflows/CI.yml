@@ -25,8 +25,8 @@ jobs:
         curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-06-26T19-56-55Z
           sudo mv mc.RELEASE.2020-06-26T19-56-55Z mc
           sudo chmod +x mc
+          sudo mv ./mc /usr/bin/ 
           ./mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
-          mv ./mc /usr/bin/ 
     - name: Build COLP ...
       working-directory: colp_build
       run: ./02_build.sh

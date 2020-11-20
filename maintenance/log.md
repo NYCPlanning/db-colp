@@ -2,7 +2,7 @@
 
 ## 2020/11/20 -- Molly
 + Try to rerun to get corrected air rights table to overwrite version in s3
-+ Try again
++ Try again. 
 
 ## 2020/11/10 -- Molly
 + Apply corrections from DCAS

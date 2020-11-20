@@ -50,6 +50,6 @@ function SHP_export {
 }
 
 function Upload {
-  mc rm -r --force spaces/edm-publishing/db-colp/$@
+  mc rm -r --force spaces/edm-publishing/db-colp/$@/
   mc cp -r output spaces/edm-publishing/db-colp/$@
 }

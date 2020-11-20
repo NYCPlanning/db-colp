@@ -5,6 +5,7 @@ echo "Generate output tables"
 psql $BUILD_ENGINE -f sql/_export.sql
 psql $BUILD_ENGINE -f sql/nov2020_corrections.sql
 
+rm -rf output
 mkdir -p output 
 (
     cd output

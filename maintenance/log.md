@@ -3,7 +3,7 @@
 ## 2020/11/20 -- Molly
 + Try to rerun to get corrected air rights table to overwrite version in s3
 + Try again
-+ Set explicit version of mc
++ Set explicit version of mc, sudo mv to bin before config
 
 ## 2020/11/10 -- Molly
 + Apply corrections from DCAS

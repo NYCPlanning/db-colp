@@ -289,7 +289,7 @@ categorized as (
 )
 
 -- Reorder columns for output
-SELECT
+SELECT DISTINCT
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",

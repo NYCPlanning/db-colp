@@ -21,9 +21,8 @@ def parse_output(geo):
         y_coord = '', 
         input_bbl = geo.get('input_bbl', ''),
         grc = geo.get('Geosupport Return Code (GRC)', ''), 
-        grc2 = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
+        rsn = geo.get('Reason Code', ''),
         msg = geo.get('Message', ''),
-        msg2 = geo.get('Message 2', ''),
     )
 
 def geocode(inputs):

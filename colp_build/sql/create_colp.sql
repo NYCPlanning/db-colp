@@ -86,6 +86,7 @@ DROP TABLE IF EXISTS _colp CASCADE;
 WITH 
 geo_merge as (
     SELECT 
+        md5(CAST((a.*)AS text)) as dcas_ipis_uid,
         a.boro as borough,
         a.block,
         a.lot,
@@ -290,6 +291,7 @@ categorized as (
 
 -- Reorder columns for output
 SELECT DISTINCT
+    dcas_ipis_uid,
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",

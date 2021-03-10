@@ -159,18 +159,18 @@ geo_merge as (
 
 address_merge AS (
     SELECT a.*,
-    b.normalized_hnum as hnum,
-    b.normalized_sname as sname,
-    (CASE 
-            WHEN b.normalized_hnum IS NOT NULL AND b.normalized_hnum <> ''
-                THEN CONCAT(b.normalized_hnum, ' ', b.normalized_sname)
-            ELSE b.normalized_sname
-    END) as address
-    FROM geo_merge a
-    LEFT JOIN dcas_ipis_addresses b
-    ON a.bbl = b.dcas_bbl
-    AND a._hnum = b.dcas_hnum
-    AND a._sname = b.dcas_sname
+        a._hnum as hnum,
+        b.sname_1b as sname,
+        (CASE 
+                WHEN a._hnum IS NOT NULL AND b.sname_1b <> ''
+                    THEN CONCAT(a._hnum, ' ', b.sname_1b)
+                ELSE b.sname_1b
+        END) as address
+        FROM geo_merge a
+        LEFT JOIN ipis_colp_geoerrors b
+        ON a.bbl = b.dcas_bbl
+        AND a._hnum = b.dcas_hnum
+        AND a._sname = b.dcas_sname
 ),
 
 pluto_merge AS (

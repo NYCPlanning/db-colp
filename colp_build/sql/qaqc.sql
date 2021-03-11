@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS ipis_colp_geoerrors;
 SELECT
     a.*,
+    b."HNUM" as display_hnum,
     b."AGENCY",
     b."USECODE",
     b."USETYPE",

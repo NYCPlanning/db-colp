@@ -103,8 +103,12 @@ geo_merge as (
                 THEN NULL
             ELSE a.cd::text 
         END) as _cd,
-        -- Include address from source data
-        a.house_number as _hnum,
+        -- Include cleaned house numeber from source data
+        CASE
+            WHEN a.house_number = '0' THEN ''
+            ELSE LTRIM(regexp_replace(a.house_number, '[^a-zA-Z0-9-]+', '','g'), '-')
+        END as hnum,
+        -- Temporarily include source data sname
         a.street_name as _sname,
         a.parcel_name as _parcelname,
         (CASE 
@@ -157,20 +161,17 @@ geo_merge as (
     WHERE a.owner <> 'R'
 ),
 
-address_merge AS (
+sname_merge AS (
     SELECT a.*,
-        a._hnum as hnum,
         b.sname_1b as sname,
         (CASE 
-                WHEN a._hnum IS NOT NULL AND b.sname_1b <> ''
-                    THEN CONCAT(a._hnum, ' ', b.sname_1b)
+                WHEN a.hnum IS NOT NULL AND b.sname_1b <> ''
+                    THEN CONCAT(a.hnum, ' ', b.sname_1b)
                 ELSE b.sname_1b
         END) as address
         FROM geo_merge a
-        LEFT JOIN ipis_colp_geoerrors b
-        ON a.bbl = b.dcas_bbl
-        AND a._hnum = b.dcas_hnum
-        AND a._sname = b.dcas_sname
+        LEFT JOIN geo_qaqc b
+        ON a.dcas_ipis_uid = b.dcas_ipis_uid
 ),
 
 pluto_merge AS (
@@ -182,7 +183,7 @@ pluto_merge AS (
                 THEN b.cd::text
             ELSE a._cd
         END) as cd
-    FROM address_merge a 
+    FROM sname_merge a 
     LEFT JOIN dcp_pluto b
     ON a.bbl::text = b.bbl::text
 ),

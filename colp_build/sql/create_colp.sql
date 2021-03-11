@@ -108,7 +108,9 @@ geo_merge as (
             WHEN a.house_number = '0' THEN ''
             ELSE LTRIM(
                     LTRIM(
-                        regexp_replace(a.house_number, '[^a-zA-Z0-9 /-]+', '','g'), 
+                        regexp_replace(
+                            REPLACE(a.house_number, '&', ' AND ')
+                            , '[^a-zA-Z0-9 /-]+', '','g'), 
                     '-'),
                 ' ')
         END as hnum,

@@ -14,7 +14,9 @@ mkdir -p output
     CSV_export colp
     CSV_export unmapped_airrights
     CSV_export colp_unmapped
-    CSV_export address_comparison
+    CSV_export ipis_unmapped
+    CSV_export ipis_colp_geoerrors
+    CSV_export modified_hnums
     echo "[$(date)] $DATE" > version.txt
 
     SHP_export $BUILD_ENGINE colp POINT colp

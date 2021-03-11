@@ -103,10 +103,14 @@ geo_merge as (
                 THEN NULL
             ELSE a.cd::text 
         END) as _cd,
-        -- Include cleaned house numeber from source data
+        -- Include cleaned house number from source data
         CASE
             WHEN a.house_number = '0' THEN ''
-            ELSE LTRIM(regexp_replace(a.house_number, '[^a-zA-Z0-9-]+', '','g'), '-')
+            ELSE LTRIM(
+                    LTRIM(
+                        regexp_replace(a.house_number, '[^a-zA-Z0-9 /-]+', '','g'), 
+                    '-'),
+                ' ')
         END as hnum,
         -- Temporarily include source data sname
         a.street_name as _sname,

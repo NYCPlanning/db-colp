@@ -36,16 +36,26 @@ FROM _colp
 WHERE "XCOORD" IS NULL
 AND LEFT("LOT"::text, 1) = '9' AND LENGTH("LOT"::text) = 4;
 
-DROP TABLE IF EXISTS qaqc_colp_unmapped;
+DROP TABLE IF EXISTS colp_unmapped;
 SELECT a.*,
-    b.geo_function,
-    b.input_hnum,
-    b.input_sname,
+    b.input_bbl,
     b.grc,
     b.rsn,
     b.msg
-INTO qaqc_colp_unmapped
+INTO colp_unmapped
 FROM _colp a
 JOIN dcas_ipis_geocodes b
 ON a."BBL" = b.input_bbl::numeric(19,8)
 WHERE a."XCOORD" IS NULL;
+
+DROP TABLE IF EXISTS ipis_unmapped;
+SELECT a.*,
+	b.geo_bbl,
+    b.grc,
+    b.rsn,
+    b.msg
+INTO ipis_unmapped
+FROM dcas_ipis a
+JOIN dcas_ipis_geocodes b
+ON a.bbl = b.input_bbl
+AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL);

@@ -24,3 +24,33 @@ FROM _colp a
 JOIN dcas_ipis_geocodes b
 ON a."BBL" = b.input_bbl::numeric(19,8)
 WHERE a."XCOORD" IS NULL;
+
+DROP TABLE IF EXISTS usetype_changes;
+WITH 
+prev AS (
+    SELECT
+        v as v_previous,
+        usetype,
+        COUNT(*) as num_records_current
+    FROM dcp_colp
+    GROUP BY v, usetype
+),
+current AS (
+    SELECT
+        TO_CHAR(CURRENT_DATE, 'YYYY/MM/DD') as v_current,
+        "USETYPE" as usetype,
+        COUNT(*) as num_records_previous
+    FROM colp
+    GROUP BY "USETYPE"
+)
+SELECT
+    a.usetype,
+    a.v_previous,
+    b.v_current,
+    a.num_records_current,
+    b.num_records_previous,
+    a.num_records_current - b.num_records_previous as difference
+INTO usetype_changes
+FROM prev a
+JOIN current b 
+ON a.usetype = b.usetype;

@@ -23,12 +23,12 @@ def parse_output(geo):
         input_bbl = geo.get('input_bbl', ''),
         input_hnum = geo.get('input_hnum', ''),
         input_sname = geo.get('input_sname', ''),
-        grc_1a = geo.get('Geosupport Return Code (GRC)', ''), 
-        grc_1e = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
-        rsn_1a = geo.get('Reason Code', ''),
-        rsn_1e = geo.get('Reason Code 2', ''),
-        msg_1a = geo.get('Message', ''),
-        msg_1e = geo.get('Message 2', '')
+        grc_1e = geo.get('Geosupport Return Code (GRC)', ''), 
+        grc_1a = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
+        rsn_1e = geo.get('Reason Code', ''),
+        rsn_1a = geo.get('Reason Code 2', ''),
+        msg_1e = geo.get('Message', ''),
+        msg_1a = geo.get('Message 2', '')
     )
 
 def geocode(hnum_in, sname_in, borough_in):

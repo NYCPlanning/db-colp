@@ -15,6 +15,7 @@ mkdir -p output
     CSV_export unmapped_airrights
     CSV_export colp_unmapped
     CSV_export address_comparison
+    CSV_export usetype_changes
     echo "[$(date)] $DATE" > version.txt
 
     SHP_export $BUILD_ENGINE colp POINT colp

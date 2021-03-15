@@ -15,4 +15,5 @@ def PLUTO_ETL():
 
 if __name__ == "__main__":
     ETL('dcas_ipis')
+    ETL('dcp_colp')
     PLUTO_ETL()

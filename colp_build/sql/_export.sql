@@ -59,3 +59,21 @@ ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
 WHERE a.dcas_hnum <> a.display_hnum
 OR (a.dcas_hnum IS NOT NULL AND a.display_hnum = '')
 OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
+
+DROP TABLE IF EXISTS ipis_modified_names;
+SELECT 
+    a.dcas_bbl, 
+    a.dcas_hnum, 
+    a.display_hnum, 
+    a.dcas_sname, 
+    a.sname_1b,
+    b.parcel_name,
+    a."PARCELNAME" as display_name,
+    b.agency,
+    b.primary_use_code,
+    b.primary_use_text
+INTO ipis_modified_names
+FROM ipis_colp_georesults a
+JOIN dcas_ipis b
+ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+WHERE b.parcel_name <> a."PARCELNAME";

@@ -3,6 +3,7 @@ SELECT
     a.*,
     b."HNUM" as display_hnum,
     b."AGENCY",
+    b."PARCELNAME",
     b."USECODE",
     b."USETYPE",
     b."OWNERSHIP",

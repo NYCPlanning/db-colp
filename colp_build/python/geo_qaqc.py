@@ -25,6 +25,8 @@ def parse_output(geo):
         input_sname = geo.get('input_sname', ''),
         grc_1e = geo.get('Geosupport Return Code (GRC)', ''), 
         grc_1a = geo.get('Geosupport Return Code 2 (GRC 2)', ''),
+        warn_1e = geo.get('Warning Code', ''),
+        warn_1a = geo.get('Warning Code 2', ''),
         rsn_1e = geo.get('Reason Code', ''),
         rsn_1a = geo.get('Reason Code 2', ''),
         msg_1e = geo.get('Message', ''),
@@ -54,12 +56,14 @@ def run_1b(inputs):
             'sname_1b': geo_dcas.pop('sname'),
             'bbl_1b': geo_dcas.pop('geo_bbl'),
             'bill_bbl_1b': geo_dcas.pop('bill_bbl'),
-            'grc_1a': geo_dcas.pop('grc_1a'),
-            'rsn_1a': geo_dcas.pop('rsn_1a'),
-            'msg_1a': geo_dcas.pop('msg_1a'),
             'grc_1e': geo_dcas.pop('grc_1e'),
             'rsn_1e': geo_dcas.pop('rsn_1e'),
-            'msg_1e': geo_dcas.pop('msg_1e')}
+            'warn_1e': geo_dcas.pop('warn_1e'),
+            'msg_1e': geo_dcas.pop('msg_1e'),
+            'grc_1a': geo_dcas.pop('grc_1a'),
+            'rsn_1a': geo_dcas.pop('rsn_1a'),
+            'warn_1a': geo_dcas.pop('warn_1a'),
+            'msg_1a': geo_dcas.pop('msg_1a')}
 
 if __name__ == '__main__':
     df = pd.read_sql('''SELECT DISTINCT 

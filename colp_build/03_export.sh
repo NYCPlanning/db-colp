@@ -12,10 +12,8 @@ mkdir -p output
 
     echo "Exporting COLP"
     CSV_export colp
-    CSV_export unmapped_airrights
-    CSV_export colp_unmapped
     CSV_export ipis_unmapped
-    CSV_export ipis_colp_geoerrors
+    CSV_export ipis_colp_georesults
     CSV_export modified_hnums
     echo "[$(date)] $DATE" > version.txt
 

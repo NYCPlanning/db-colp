@@ -86,6 +86,7 @@ DROP TABLE IF EXISTS _colp CASCADE;
 WITH 
 geo_merge as (
     SELECT 
+        md5(CAST((a.*)AS text)) as dcas_ipis_uid,
         a.boro as borough,
         a.block,
         a.lot,
@@ -102,8 +103,18 @@ geo_merge as (
                 THEN NULL
             ELSE a.cd::text 
         END) as _cd,
-        -- Include address from source data
-        a.house_number as _hnum,
+        -- Include cleaned house number from source data
+        CASE
+            WHEN a.house_number = '0' THEN ''
+            ELSE LTRIM(
+                    LTRIM(
+                        regexp_replace(
+                            REPLACE(a.house_number, '&', ' AND ')
+                            , '[^a-zA-Z0-9 /-]+', '','g'), 
+                    '-'),
+                ' ')
+        END as hnum,
+        -- Temporarily include source data sname
         a.street_name as _sname,
         a.parcel_name as _parcelname,
         (CASE 
@@ -156,20 +167,17 @@ geo_merge as (
     WHERE a.owner <> 'R'
 ),
 
-address_merge AS (
+sname_merge AS (
     SELECT a.*,
-    b.normalized_hnum as hnum,
-    b.normalized_sname as sname,
-    (CASE 
-            WHEN b.normalized_hnum IS NOT NULL AND b.normalized_hnum <> ''
-                THEN CONCAT(b.normalized_hnum, ' ', b.normalized_sname)
-            ELSE b.normalized_sname
-    END) as address
-    FROM geo_merge a
-    LEFT JOIN dcas_ipis_addresses b
-    ON a.bbl = b.dcas_bbl
-    AND a._hnum = b.dcas_hnum
-    AND a._sname = b.dcas_sname
+        b.sname_1b as sname,
+        (CASE 
+                WHEN a.hnum IS NOT NULL AND b.sname_1b <> ''
+                    THEN CONCAT(a.hnum, ' ', b.sname_1b)
+                ELSE b.sname_1b
+        END) as address
+        FROM geo_merge a
+        LEFT JOIN geo_qaqc b
+        ON a.dcas_ipis_uid = b.dcas_ipis_uid
 ),
 
 pluto_merge AS (
@@ -181,7 +189,7 @@ pluto_merge AS (
                 THEN b.cd::text
             ELSE a._cd
         END) as cd
-    FROM address_merge a 
+    FROM sname_merge a 
     LEFT JOIN dcp_pluto b
     ON a.bbl::text = b.bbl::text
 ),
@@ -290,6 +298,7 @@ categorized as (
 
 -- Reorder columns for output
 SELECT DISTINCT
+    dcas_ipis_uid,
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",

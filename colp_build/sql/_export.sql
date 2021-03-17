@@ -1,30 +1,87 @@
 DROP TABLE IF EXISTS colp;
-SELECT *
+SELECT 
+    "BOROUGH",
+    "BLOCK",
+    "LOT",
+    "BBL",
+    "BILLBBL",
+    "CD",
+    "HNUM",
+    "SNAME",
+    "ADDRESS",
+    "PARCELNAME",
+    "AGENCY",
+    "USECODE",
+    "USETYPE",
+    "OWNERSHIP",
+    "CATEGORY",
+    "EXPANDCAT",
+    "EXCATDESC",
+    "LEASED",
+    "FINALCOM",
+    "AGREEMENT",
+    "XCOORD",
+    "YCOORD",
+    "LATITUDE",
+    "LONGITUDE",
+    "GEOM"
 INTO colp
 FROM _colp
 WHERE "XCOORD" IS NOT NULL;
 
-DROP TABLE IF EXISTS unmapped_airrights;
-SELECT *
-INTO unmapped_airrights
-FROM _colp
-WHERE "XCOORD" IS NULL
-AND LEFT("LOT"::text, 1) = '9' AND LENGTH("LOT"::text) = 4;
-
-DROP TABLE IF EXISTS colp_unmapped;
+-- Create QAQC table of unmappable input records
+DROP TABLE IF EXISTS ipis_unmapped;
 SELECT a.*,
-    b.geo_function,
-    b.input_hnum,
-    b.input_sname,
+	b.geo_bbl,
     b.grc,
-    b.msg,
-    b.msg2
-INTO colp_unmapped
-FROM _colp a
+    b.rsn,
+    b.msg
+INTO ipis_unmapped
+FROM dcas_ipis a
 JOIN dcas_ipis_geocodes b
-ON a."BBL" = b.input_bbl::numeric(19,8)
-WHERE a."XCOORD" IS NULL;
+ON a.bbl = b.input_bbl
+AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL);
 
+-- Create QAQC table of records with modified house numbers
+DROP TABLE IF EXISTS ipis_modified_hnums;
+SELECT 
+    a.dcas_bbl, 
+    a.dcas_hnum, 
+    a.display_hnum, 
+    a.dcas_sname, 
+    a.sname_1b,
+    b.parcel_name,
+    b.agency,
+    b.primary_use_code,
+    b.primary_use_text
+INTO ipis_modified_hnums
+FROM ipis_colp_georesults a
+JOIN dcas_ipis b
+ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+WHERE a.dcas_hnum <> a.display_hnum
+OR (a.dcas_hnum IS NOT NULL AND a.display_hnum = '')
+OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
+
+-- Create QAQC table of records with modified parcel names
+DROP TABLE IF EXISTS ipis_modified_names;
+SELECT 
+    a.dcas_bbl, 
+    a.dcas_hnum, 
+    a.display_hnum, 
+    a.dcas_sname, 
+    a.sname_1b,
+    b.parcel_name,
+    a."PARCELNAME" as display_name,
+    b.agency,
+    b.primary_use_code,
+    b.primary_use_text
+INTO ipis_modified_names
+FROM ipis_colp_georesults a
+JOIN dcas_ipis b
+ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+WHERE b.parcel_name <> a."PARCELNAME";
+
+-- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;
 WITH 
 prev AS (

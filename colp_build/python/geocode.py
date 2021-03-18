@@ -1,15 +1,10 @@
 from multiprocessing import Pool, cpu_count
-from utils.exporter import exporter
 from geosupport import Geosupport, GeosupportError
-from sqlalchemy import create_engine
-from datetime import date
 import pandas as pd
-import numpy as np
-import json
-import os 
+
+from .utils import engine, psql_insert_copy
 
 g = Geosupport()
-engine = create_engine(os.getenv('BUILD_ENGINE'))
 
 def parse_output(geo):
     return dict(
@@ -55,19 +50,23 @@ if __name__ == '__main__':
     
     print('geocoding finished ...')
     result = pd.DataFrame(it)
-    print(list(result))
     print(result.head())
 
-    table_name = f'dcas_ipis_geocodes'
-    exporter(result, table_name, con=engine, sep='~', null='')
+    result.to_sql(
+        "dcas_ipis_geocodes",
+        con=engine,
+        if_exists="replace",
+        index=False,
+        method=psql_insert_copy,
+    )
 
     engine.execute(f'''
-        ALTER TABLE {table_name}
+        ALTER TABLE dcas_ipis_geocodes
             ADD wkb_geometry geometry(Geometry,4326);
-        UPDATE {table_name}
+        UPDATE dcas_ipis_geocodes
         SET wkb_geometry = ST_SetSRID(ST_Point(longitude::DOUBLE PRECISION,
                             latitude::DOUBLE PRECISION), 4326); 
-        UPDATE {table_name}
+        UPDATE dcas_ipis_geocodes
         SET x_coord = ST_X(ST_TRANSFORM(wkb_geometry, 2263))::text,
             y_coord = ST_Y(ST_TRANSFORM(wkb_geometry, 2263))::text;
     ''')

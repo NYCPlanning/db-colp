@@ -10,7 +10,8 @@ docker run --rm\
     -e BUILD_ENGINE=$BUILD_ENGINE\
     nycplanning/docker-geosupport:latest bash -c "python3 python/geo_qaqc.py;
                                                 python3 python/geocode.py"
-                                                
+
+psql $BUILD_ENGINE -f sql/_procedures.sql                                                
 psql $BUILD_ENGINE -f sql/name.sql
 psql $BUILD_ENGINE -f sql/create_colp.sql
 psql $BUILD_ENGINE -f sql/qaqc.sql

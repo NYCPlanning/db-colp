@@ -2,8 +2,7 @@
 source config.sh
 
 echo "Generate output tables"
-psql $BUILD_ENGINE -f sql/_export.sql
-psql $BUILD_ENGINE -f sql/nov2020_corrections.sql
+psql $BUILD_ENGINE -f sql/export.sql
 
 rm -rf output
 mkdir -p output 

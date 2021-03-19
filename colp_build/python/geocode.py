@@ -41,8 +41,16 @@ def geocode(inputs):
     return geo_bl
 
 if __name__ == '__main__':
-    df = pd.read_sql('''SELECT DISTINCT bbl
-                        from dcas_ipis''',
+    df = pd.read_sql('''SELECT DISTINCT bbl 
+                        FROM (
+                            SELECT DISTINCT bbl
+                            FROM dcas_ipis
+                            UNION
+                            SELECT DISTINCT donating_bbl as bbl
+                            FROM dcas_ipis a
+                            LEFT JOIN dof_air_rights_lots b
+                            ON a.bbl = b.air_rights_bbl ) a
+                        WHERE bbl IS NOT NULL''',
                     con=engine)
     print(f'input data shape: {df.shape}')
 

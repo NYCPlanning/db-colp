@@ -84,13 +84,23 @@ OUTPUTS:
 
 DROP TABLE IF EXISTS _colp CASCADE;
 WITH 
-geo_merge as (
+air_rights_merge as (
     SELECT 
         md5(CAST((a.*)AS text)) as dcas_ipis_uid,
+        a.*,
+        COALESCE(b.donating_bbl, a.bbl) as geo_bbl
+    FROM dcas_ipis a
+    LEFT JOIN dof_air_rights_lots b
+    ON a.bbl = b.air_rights_bbl
+),
+geo_merge as (
+    SELECT 
+        dcas_ipis_uid,
         a.boro as borough,
         a.block,
         a.lot,
         a.bbl,
+        a.geo_bbl,
         -- Add geosupport-returned billing BBL
         (CASE 
             WHEN b.bill_bbl = '0000000000' OR b.bill_bbl IS NULL
@@ -161,9 +171,9 @@ geo_merge as (
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
             ELSE NULL
         END) as geom
-    FROM dcas_ipis a
+    FROM air_rights_merge a
     LEFT JOIN dcas_ipis_geocodes b
-    ON a.bbl = b.input_bbl
+    ON a.geo_bbl = b.input_bbl
     WHERE a.owner <> 'R'
 ),
 
@@ -191,7 +201,7 @@ pluto_merge AS (
         END) as cd
     FROM sname_merge a 
     LEFT JOIN dcp_pluto b
-    ON a.bbl::text = b.bbl::text
+    ON a.geo_bbl::text = b.bbl::text
 ),
 
 normed_name_merge as (

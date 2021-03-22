@@ -153,6 +153,143 @@ AND NOT (
     )
 ;
 
+-- Create QAQC table of addresses that return streetname errors from 1B
+DROP TABLE IF EXISTS ipis_sname_errors;
+SELECT 
+    a.dcas_ipis_uid,
+    a.dcas_bbl,
+    b."BILLBBL" as dcas_bill_bbl,
+    a.display_hnum,
+    a.dcas_hnum,
+    a.dcas_sname,
+    a.hnum_1b,
+    a.sname_1b,
+    a.bbl_1b,
+    a.grc_1e,
+    a.rsn_1e,
+    a.warn_1e,
+    a.msg_1e,
+    a.grc_1a,
+    a.rsn_1a,
+    a.warn_1a,
+    a.msg_1a,
+    a."AGENCY",
+    a."PARCELNAME",
+    a."USECODE",
+    a."USETYPE",
+    a."OWNERSHIP",
+    a."CATEGORY",
+    a."EXPANDCAT",
+    a."EXCATDESC",
+    a."LEASED",
+    a."FINALCOM",
+    a."AGREEMENT",
+    (CASE
+        WHEN LEFT(a."USECODE", 2) 
+            IN ('01','02','03','05','06','07','12')
+        THEN '1' ELSE '0'
+    END) AS building
+INTO ipis_sname_errors
+FROM ipis_colp_georesults a
+JOIN _colp b
+ON a.dcas_ipis_uid = b.dcas_ipis_uid
+-- Include records where one or both GRC is 11 or EE
+WHERE (a.grc_1e IN ('00','EE') 
+        OR a.grc_1a IN ('00','EE'))
+;
+
+-- Create QAQC table of addresses that return address errors from 1B
+DROP TABLE IF EXISTS ipis_hnum_errors;
+SELECT 
+    a.dcas_ipis_uid,
+    a.dcas_bbl,
+    b."BILLBBL" as dcas_bill_bbl,
+    a.display_hnum,
+    a.dcas_hnum,
+    a.dcas_sname,
+    a.hnum_1b,
+    a.sname_1b,
+    a.bbl_1b,
+    a.grc_1e,
+    a.rsn_1e,
+    a.warn_1e,
+    a.msg_1e,
+    a.grc_1a,
+    a.rsn_1a,
+    a.warn_1a,
+    a.msg_1a,
+    a."AGENCY",
+    a."PARCELNAME",
+    a."USECODE",
+    a."USETYPE",
+    a."OWNERSHIP",
+    a."CATEGORY",
+    a."EXPANDCAT",
+    a."EXCATDESC",
+    a."LEASED",
+    a."FINALCOM",
+    a."AGREEMENT",
+    (CASE
+        WHEN LEFT(a."USECODE", 2) 
+            IN ('01','02','03','05','06','07','12')
+        THEN '1' ELSE '0'
+    END) AS building
+INTO ipis_hnum_errors
+FROM ipis_colp_georesults a
+JOIN _colp b
+ON a.dcas_ipis_uid = b.dcas_ipis_uid
+-- Include records where one or both GRC is 11 or EE
+WHERE (a.grc_1e IN ('41','42') 
+        OR a.grc_1a IN ('41','42'))
+;
+
+-- Create QAQC table of records where address isn't valid for BBL
+DROP TABLE IF EXISTS ipis_bbl_errors;
+SELECT 
+    a.dcas_ipis_uid,
+    a.dcas_bbl,
+    b."BILLBBL" as dcas_bill_bbl,
+    a.display_hnum,
+    a.dcas_hnum,
+    a.dcas_sname,
+    a.hnum_1b,
+    a.sname_1b,
+    a.bbl_1b,
+    a.grc_1e,
+    a.rsn_1e,
+    a.warn_1e,
+    a.msg_1e,
+    a.grc_1a,
+    a.rsn_1a,
+    a.warn_1a,
+    a.msg_1a,
+    a."AGENCY",
+    a."PARCELNAME",
+    a."USECODE",
+    a."USETYPE",
+    a."OWNERSHIP",
+    a."CATEGORY",
+    a."EXPANDCAT",
+    a."EXCATDESC",
+    a."LEASED",
+    a."FINALCOM",
+    a."AGREEMENT",
+    (CASE
+        WHEN LEFT(a."USECODE", 2) 
+            IN ('01','02','03','05','06','07','12')
+        THEN '1' ELSE '0'
+    END) AS building
+INTO ipis_bbl_errors
+FROM ipis_colp_georesults a
+JOIN _colp b
+ON a.dcas_ipis_uid = b.dcas_ipis_uid
+/* 
+Include records where billing BBL associated with the 
+DCAS input BBL does not match the address's returned BBL
+*/
+WHERE a.bbl_1b <> b."BILLBBL"
+;
+
 -- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;
 WITH 

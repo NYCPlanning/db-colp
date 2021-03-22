@@ -9,3 +9,5 @@ docker run --rm\
     -e BUILD_ENGINE=$BUILD_ENGINE\
     -e EDM_DATA=$EDM_DATA\
     nycplanning/cook:latest bash -c "python3 python/dataloading.py"
+
+psql $BUILD_ENGINE -f sql/load_corrections.sql  

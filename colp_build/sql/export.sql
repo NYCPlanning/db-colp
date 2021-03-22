@@ -82,6 +82,77 @@ JOIN dcas_ipis b
 ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
 WHERE b.parcel_name <> a."PARCELNAME";
 
+-- Create QAQC table of addresses that return errors from 1B
+DROP TABLE IF EXISTS ipis_colp_geoerrors;
+SELECT 
+    a.dcas_ipis_uid,
+    a.dcas_bbl,
+    b."BILLBBL" as dcas_bill_bbl,
+    a.display_hnum,
+    a.dcas_hnum,
+    a.dcas_sname,
+    a.hnum_1b,
+    a.sname_1b,
+    a.bbl_1b,
+    a.grc_1e,
+    a.rsn_1e,
+    a.warn_1e,
+    a.msg_1e,
+    a.grc_1a,
+    a.rsn_1a,
+    a.warn_1a,
+    a.msg_1a,
+    a."AGENCY",
+    a."PARCELNAME",
+    a."USECODE",
+    a."USETYPE",
+    a."OWNERSHIP",
+    a."CATEGORY",
+    a."EXPANDCAT",
+    a."EXCATDESC",
+    a."LEASED",
+    a."FINALCOM",
+    a."AGREEMENT",
+    (CASE
+        WHEN LEFT(a."USECODE", 2) 
+            IN ('01','02','03','05','06','07','12')
+        THEN '1' ELSE '0'
+    END) AS building
+INTO ipis_colp_geoerrors
+FROM ipis_colp_georesults a
+JOIN _colp b
+ON a.dcas_ipis_uid = b.dcas_ipis_uid
+-- Exclude records where both GRC are 00
+WHERE (a.grc_1e <> '00' OR a.grc_1a <> '00')
+/* 
+Exclude records where either one or both are 01
+having reasons other than 1 - 9, B, C, I, J
+*/
+AND NOT (
+        (a.grc_1e = '00' 
+        AND (a.grc_1a = '01' 
+            AND a.rsn_1a IN ('1','2','3','4','5','6','7','8','9','B','C','I','J')
+            )
+        )
+        OR 
+        (a.grc_1a = '00' 
+        AND (a.grc_1e = '01' 
+            AND a.rsn_1e IN ('1','2','3','4','5','6','7','8','9','B','C','I','J')
+            )
+        )
+        OR
+        (
+            (a.grc_1a = '01' 
+            AND a.rsn_1a IN ('1','2','3','4','5','6','7','8','9','B','C','I','J')
+            )
+            AND
+            (a.grc_1e = '01' 
+            AND a.rsn_1e IN ('1','2','3','4','5','6','7','8','9','B','C','I','J')
+            )
+        )
+    )
+;
+
 -- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;
 WITH 

@@ -12,7 +12,10 @@ mkdir -p output
     echo "Exporting COLP"
     CSV_export colp
     CSV_export ipis_unmapped
-    CSV_export ipis_colp_georesults
+    CSV_export ipis_colp_geoerrors
+    CSV_export ipis_sname_errors
+    CSV_export ipis_hnum_errors
+    CSV_export ipis_bbl_errors
     CSV_export ipis_modified_hnums
     CSV_export ipis_modified_names
     CSV_export usetype_changes

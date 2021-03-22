@@ -287,7 +287,7 @@ ON a.dcas_ipis_uid = b.dcas_ipis_uid
 Include records where billing BBL associated with the 
 DCAS input BBL does not match the address's returned BBL
 */
-WHERE a.bbl_1b <> b."BILLBBL"
+WHERE a.bbl_1b::numeric(19,8) <> b."BILLBBL"
 ;
 
 -- Create QAQC table of version-to-version changes in the number of records per use type

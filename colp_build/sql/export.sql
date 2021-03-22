@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS colp;
 SELECT 
+    dcas_ipis_uid,
     "BOROUGH",
     "BLOCK",
     "LOT",

@@ -1,34 +1,25 @@
-DROP TABLE IF EXISTS colp;
-SELECT 
-    dcas_ipis_uid,
-    "BOROUGH",
-    "BLOCK",
-    "LOT",
-    "BBL",
-    "BILLBBL",
-    "CD",
-    "HNUM",
-    "SNAME",
-    "ADDRESS",
-    "PARCELNAME",
-    "AGENCY",
-    "USECODE",
-    "USETYPE",
-    "OWNERSHIP",
-    "CATEGORY",
-    "EXPANDCAT",
-    "EXCATDESC",
-    "LEASED",
-    "FINALCOM",
-    "AGREEMENT",
-    "XCOORD",
-    "YCOORD",
-    "LATITUDE",
-    "LONGITUDE",
-    "GEOM"
-INTO colp
-FROM _colp
-WHERE "XCOORD" IS NOT NULL;
+/*
+DESCRIPTION:
+    Creates various QAQC tables. The majority are designed to identify invalid data in IPIS.
+    Some are designed to help GRU research potential new addresses.
+    There is also a version-to-version comparison for COLP review.
+INPUTS:
+	dcas_ipis
+    dcas_ipis_geocodes
+    ipis_colp_georesults
+    _colp
+    dcp_colp
+OUTPUTS: 
+	ipis_unmapped
+    ipis_modified_hnums
+    ipis_modified_names
+    ipis_colp_geoerrors
+    ipis_sname_errors
+    ipis_hnum_errors
+    ipis_bbl_errors
+    ipis_cd_errors
+    usetype_changes
+*/
 
 -- Create QAQC table of unmappable input records
 DROP TABLE IF EXISTS ipis_unmapped;
@@ -289,6 +280,20 @@ DCAS input BBL does not match the address's returned BBL
 */
 WHERE a.bbl_1b::numeric(19,8) <> b."BILLBBL"
 ;
+
+-- Create QAQC table of mismatch between IPIS community district and PLUTO
+DROP TABLE IF EXISTS ipis_cd_errors;
+SELECT
+    dcas_ipis_uid,
+    "BBL",
+    dcas_cd,
+    pluto_cd,
+    "CD"
+INTO ipis_cd_errors
+FROM _colp
+WHERE dcas_cd <> pluto_cd
+OR (dcas_cd IS NULL AND pluto_cd IS NOT NULL)
+OR (dcas_cd IS NOT NULL AND pluto_cd IS NULL);
 
 -- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;

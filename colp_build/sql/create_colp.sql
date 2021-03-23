@@ -112,7 +112,7 @@ geo_merge as (
             WHEN a.cd::text LIKE '_0' OR a.cd IS NULL 
                 THEN NULL
             ELSE a.cd::text 
-        END) as _cd,
+        END) as dcas_cd,
         -- Include cleaned house number from source data
         CASE
             WHEN a.house_number = '0' THEN ''
@@ -193,15 +193,12 @@ sname_merge AS (
 pluto_merge AS (
     SELECT
         a.*,
-        -- Backfill missing cd with pluto
-        (CASE 
-            WHEN a._cd IS NULL 
-                THEN b.cd::text
-            ELSE a._cd
-        END) as cd
+        -- Get CD from pluto, using donating BBL for join
+        b.cd::text as pluto_cd,
+        COALESCE(b.cd::text, a.dcas_cd) as cd
     FROM sname_merge a 
     LEFT JOIN dcp_pluto b
-    ON a.geo_bbl::text = b.bbl::text
+    ON a.geo_bbl::numeric(19,8)::text = b.bbl::text
 ),
 
 normed_name_merge as (
@@ -309,6 +306,9 @@ categorized as (
 -- Reorder columns for output
 SELECT DISTINCT
     dcas_ipis_uid,
+    geo_bbl::numeric(19,8),
+    dcas_cd::smallint,
+    pluto_cd::smallint,
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",

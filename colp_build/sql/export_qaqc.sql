@@ -185,8 +185,8 @@ FROM ipis_colp_georesults a
 JOIN _colp b
 ON a.dcas_ipis_uid = b.dcas_ipis_uid
 -- Include records where one or both GRC is 11 or EE
-WHERE (a.grc_1e IN ('00','EE') 
-        OR a.grc_1a IN ('00','EE'))
+WHERE (a.grc_1e IN ('11','EE') 
+        OR a.grc_1a IN ('11','EE'))
 ;
 
 -- Create QAQC table of addresses that return address errors from 1B
@@ -278,7 +278,7 @@ ON a.dcas_ipis_uid = b.dcas_ipis_uid
 Include records where billing BBL associated with the 
 DCAS input BBL does not match the address's returned BBL
 */
-WHERE a.bbl_1b::numeric(19,8) <> b."BILLBBL"
+WHERE a.bbl_1b::numeric <> b."BILLBBL"
 ;
 
 -- Create QAQC table of mismatch between IPIS community district and PLUTO

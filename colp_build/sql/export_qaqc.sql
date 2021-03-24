@@ -229,7 +229,7 @@ INTO ipis_hnum_errors
 FROM ipis_colp_georesults a
 JOIN _colp b
 ON a.dcas_ipis_uid = b.dcas_ipis_uid
--- Include records where one or both GRC is 11 or EE
+-- Include records where one or both GRC is 41 or 42
 WHERE (a.grc_1e IN ('41','42') 
         OR a.grc_1a IN ('41','42'))
 ;

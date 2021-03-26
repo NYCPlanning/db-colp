@@ -16,10 +16,10 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | [corrections_not_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/corrections_not_applied.csv) | Table of manual corrections that existed in the corrections table, but failed to get applied |
 | [ipis_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_unmapped.csv) | QAQC table of unmappable input records |
 | [ipis_colp_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_colp_geoerrors.csv) | QAQC table of addresses that return errors (or warnings type 1-9, B, C, I, J) from 1B |
-| [ipis_sname_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_sname_geoerrors.csv) | QAQC table of addresses that return streetname errors (GRC is 11 or EE) from 1B |
-| [ipis_hnum_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_hnum_geoerrors.csv) | QAQC table of addresses that return out-of-range address errors (GRC is 41 or 42) from 1B |
-| [ipis_bbl_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_bbl_geoerrors.csv) | QAQC table of records where address isn't valid for input BBL |
-| [ipis_cd_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_cd_geoerrors.csv) | QAQC table of mismatch between IPIS community district and PLUTO |
+| [ipis_sname_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_sname_errors.csv) | QAQC table of addresses that return streetname errors (GRC is 11 or EE) from 1B |
+| [ipis_hnum_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_hnum_errors.csv) | QAQC table of addresses that return out-of-range address errors (GRC is 41 or 42) from 1B |
+| [ipis_bbl_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_bbl_errors.csv) | QAQC table of records where address isn't valid for input BBL |
+| [ipis_cd_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_cd_errors.csv) | QAQC table of mismatch between IPIS community district and PLUTO |
 | [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Build date |
 
 ## Additional Resources

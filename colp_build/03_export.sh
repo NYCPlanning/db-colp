@@ -12,6 +12,8 @@ mkdir -p output
 
     echo "Exporting COLP"
     CSV_export colp
+    SHP_export colp POINT
+
     CSV_export ipis_unmapped
     CSV_export ipis_colp_geoerrors
     CSV_export ipis_sname_errors
@@ -25,7 +27,6 @@ mkdir -p output
     CSV_export corrections_not_applied
     echo "[$(date)] $DATE" > version.txt
 
-    SHP_export $BUILD_ENGINE colp POINT colp
 )
 
 zip -r output/output.zip output

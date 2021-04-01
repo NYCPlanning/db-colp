@@ -34,19 +34,21 @@ function CSV_export {
 }
 
 function SHP_export {
-  urlparse $1
-  mkdir -p $4 &&
-    (
-      cd $4
-      ogr2ogr -progress -f "ESRI Shapefile" $4.shp \
-          PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
-          -nlt $3 $2
-        rm -f $4.zip
-        zip -9 $4.zip *
-        ls | grep -v $4.zip | xargs rm
-      )
-  mv $4/$4.zip $4.zip
-  rm -rf $4
+  urlparse $BUILD_ENGINE
+  table=$1
+  geomtype=$2
+  name=${3:-$table}
+  mkdir -p $name &&(
+    cd $name
+    ogr2ogr -progress -f "ESRI Shapefile" $name.shp \
+        PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
+        $table -nlt $geomtype
+      rm -f $name.shp.zip
+      zip -9 $name.shp.zip *
+      ls | grep -v $name.shp.zip | xargs rm
+  )
+  mv $name/$name.shp.zip $name.shp.zip
+  rm -rf $name
 }
 
 function Upload {

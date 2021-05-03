@@ -13,6 +13,7 @@ mkdir -p output
     echo "Exporting COLP"
     CSV_export colp
     SHP_export colp POINT
+    FGDB_export colp POINT
 
     CSV_export ipis_unmapped
     CSV_export ipis_colp_geoerrors

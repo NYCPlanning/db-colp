@@ -51,6 +51,25 @@ function SHP_export {
   rm -rf $name
 }
 
+function FGDB_export {
+  urlparse $BUILD_ENGINE
+  table=$1
+  geomtype=$2
+  name=${3:-$table}
+  mkdir -p $name.gdb &&
+  (cd $name.gdb
+    ogr2ogr -progress -f "FileGDB" $name.gdb \
+      PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
+        -mapFieldType Integer64=Real\
+        -lco GEOMETRY_NAME=Shape\
+        -nln $name\
+        -nlt $geomtype $name
+      rm -f $name.gdb.zip
+      zip -r $name.gdb.zip $name.gdb
+      rm -rf $name.gdb
+    )
+}
+
 function Upload {
   mc rm -r --force spaces/edm-publishing/db-colp/$@/
   mc cp -r output spaces/edm-publishing/db-colp/$@

@@ -80,6 +80,7 @@ FROM _ipis_modified_names a
 LEFT JOIN reviewed_modified_names b
 ON a.dcas_bbl = b.dcas_bbl 
 AND a.parcel_name = b.parcel_name
+AND a.display_name = b.display_name
 ;
 
 -- Create QAQC table of addresses that return errors from 1B

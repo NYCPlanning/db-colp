@@ -27,6 +27,27 @@ function urlparse {
     BUILD_DB="$(echo $url | grep / | cut -d/ -f2-)"
 }
 
+function import_public {
+  name=$1
+  version=${2:-latest}
+  get_version $1 $2
+  target_dir=$(pwd)/.library/datasets/$name/$version
+
+  # Download sql dump for the datasets from data library
+  if [ -f $target_dir/$name.sql ]; then
+    echo "✅ $name.sql exists in cache"
+  else
+    echo "🛠 $name.sql doesn't exists in cache, downloading ..."
+    mkdir -p $target_dir && (
+      cd $target_dir
+      curl -ss -O $url/datasets/$name/$version/$name.sql
+    )
+  fi
+
+  # Loading into Database
+  psql $BUILD_ENGINE -v ON_ERROR_STOP=1 -q -f $target_dir/$name.sql
+}
+
 function CSV_export {
   psql $BUILD_ENGINE  -c "\COPY (
     SELECT * FROM $@

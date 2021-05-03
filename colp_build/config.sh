@@ -27,6 +27,14 @@ function urlparse {
     BUILD_DB="$(echo $url | grep / | cut -d/ -f2-)"
 }
 
+function get_version {
+  name=$1
+  version=${2:-latest}
+  url=https://nyc3.digitaloceanspaces.com/edm-recipes
+  version=$(curl -s $url/datasets/$name/$version/config.json | jq -r '.dataset.version')
+  echo -e "🔵 $name version: \e[92m\e[1m$version\e[21m\e[0m"
+}
+
 function import_public {
   name=$1
   version=${2:-latest}

@@ -58,8 +58,11 @@ function FGDB_export {
   name=${3:-$table}
   mkdir -p $name.gdb &&
   (cd $name.gdb
-    ogr2ogr -progress -f "FileGDB" $name.gdb \
-      PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
+    docker run \
+      -v $(pwd):/data\
+      --user $UID\
+      --rm webmapp/gdal-docker:latest ogr2ogr -progress -f "FileGDB" $name.gdb \
+        PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
         -mapFieldType Integer64=Real\
         -lco GEOMETRY_NAME=Shape\
         -nln $name\

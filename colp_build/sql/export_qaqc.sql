@@ -56,6 +56,7 @@ OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
 
 -- Create QAQC table of records with modified parcel names
 DROP TABLE IF EXISTS ipis_modified_names;
+WITH _ipis_modified_names AS (
 SELECT 
     a.dcas_bbl, 
     a.dcas_hnum, 
@@ -67,11 +68,20 @@ SELECT
     b.agency,
     b.primary_use_code,
     b.primary_use_text
-INTO ipis_modified_names
 FROM ipis_colp_georesults a
 JOIN dcas_ipis b
 ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
-WHERE b.parcel_name <> a."PARCELNAME";
+WHERE b.parcel_name <> a."PARCELNAME")
+SELECT
+    a.*,
+    b.reviewed
+INTO ipis_modified_names
+FROM _ipis_modified_names a
+LEFT JOIN reviewed_modified_names b
+ON a.dcas_bbl = b.dcas_bbl 
+AND a.parcel_name = b.parcel_name
+AND a.display_name = b.display_name
+;
 
 -- Create QAQC table of addresses that return errors from 1B
 DROP TABLE IF EXISTS ipis_colp_geoerrors;

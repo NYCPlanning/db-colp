@@ -54,6 +54,7 @@ function import_public {
 
   # Loading into Database
   psql $BUILD_ENGINE -v ON_ERROR_STOP=1 -q -f $target_dir/$name.sql
+  psql $BUILD_ENGINE -c "ALTER TABLE $name ADD COLUMN v text; UPDATE $name SET v = '$version';"
 }
 
 function CSV_export {

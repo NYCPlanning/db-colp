@@ -26,6 +26,7 @@ function urlparse {
     BUILD_PORT="$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
     BUILD_DB="$(echo $url | grep / | cut -d/ -f2-)"
 }
+urlparse $BUILD_ENGINE
 
 function get_version {
   name=$1
@@ -63,13 +64,15 @@ function CSV_export {
 }
 
 function SHP_export {
-  urlparse $BUILD_ENGINE
   table=$1
   geomtype=$2
   name=${3:-$table}
   mkdir -p $name &&(
     cd $name
-    ogr2ogr -progress -f "ESRI Shapefile" $name.shp \
+    docker run \
+      -v $(pwd):/data\
+      --user $UID\
+      --rm webmapp/gdal-docker:latest ogr2ogr -progress -f "ESRI Shapefile" $name.shp \
         PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
         $table -nlt $geomtype
       rm -f $name.shp.zip
@@ -81,7 +84,6 @@ function SHP_export {
 }
 
 function FGDB_export {
-  urlparse $BUILD_ENGINE
   table=$1
   geomtype=$2
   name=${3:-$table}

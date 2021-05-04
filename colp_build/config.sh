@@ -70,6 +70,7 @@ function SHP_export {
   mkdir -p $name &&(
     cd $name
     docker run \
+      --network host\
       -v $(pwd):/data\
       --user $UID\
       --rm webmapp/gdal-docker:latest ogr2ogr -progress -f "ESRI Shapefile" $name.shp \
@@ -90,6 +91,7 @@ function FGDB_export {
   mkdir -p $name.gdb &&
   (cd $name.gdb
     docker run \
+      --network host\
       -v $(pwd):/data\
       --user $UID\
       --rm webmapp/gdal-docker:latest ogr2ogr -progress -f "FileGDB" $name.gdb \

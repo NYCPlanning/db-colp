@@ -134,7 +134,7 @@ geo_merge as (
         -- Create temp use code field, without 1900 cleaning
         (LPAD(split_part(a.primary_use_code::text, '.', 1), 4, '0')) as _usecode,
         -- Create temp use type field, without 1900 cleaning
-        a.primary_use_text as _usetype,
+        REPLACE(a.primary_use_text, 'STRUCTURESE', 'STRUCTURE') as _usetype,
         -- Fill null ownership values
         (CASE 
             WHEN a.owner IS NULL 

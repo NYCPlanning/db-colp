@@ -40,32 +40,35 @@ def run_1b(inputs):
     house_number = inputs.get("house_number")
     street_name = inputs.get("street_name")
     bbl = inputs.get("bbl")
-    geo_dcas = geocode(re.sub(r"¦", "", house_number), street_name, bbl[0])
+    geo_dcas = geocode(house_number, street_name, bbl[0])
     return {"dcas_ipis_uid": uid,
             "dcas_bbl": bbl,
             "dcas_hnum": house_number,
             "dcas_sname": street_name, 
-            "hnum_1b": geo_dcas.pop("hnum"),
-            "sname_1b": geo_dcas.pop("sname"),
-            "bbl_1b": geo_dcas.pop("geo_bbl"),
-            "bill_bbl_1b": geo_dcas.pop("bill_bbl"),
-            "grc_1e": geo_dcas.pop("grc_1e"),
-            "rsn_1e": geo_dcas.pop("rsn_1e"),
-            "warn_1e": geo_dcas.pop("warn_1e"),
-            "msg_1e": geo_dcas.pop("msg_1e"),
-            "grc_1a": geo_dcas.pop("grc_1a"),
-            "rsn_1a": geo_dcas.pop("rsn_1a"),
-            "warn_1a": geo_dcas.pop("warn_1a"),
-            "msg_1a": geo_dcas.pop("msg_1a")}
+            "hnum_1b": geo_dcas.get("hnum", ''),
+            "sname_1b": geo_dcas.get("sname", ''),
+            "bbl_1b": geo_dcas.get("geo_bbl", ''),
+            "bill_bbl_1b": geo_dcas.get("bill_bbl", ''),
+            "grc_1e": geo_dcas.get("grc_1e", ''),
+            "rsn_1e": geo_dcas.get("rsn_1e", ''),
+            "warn_1e": geo_dcas.get("warn_1e", ''),
+            "msg_1e": geo_dcas.get("msg_1e", ''),
+            "grc_1a": geo_dcas.get("grc_1a", ''),
+            "rsn_1a": geo_dcas.get("rsn_1a", ''),
+            "warn_1a": geo_dcas.get("warn_1a", ''),
+            "msg_1a": geo_dcas.get("msg_1a", '')
+            }
 
 if __name__ == "__main__":
-    df = pd.read_sql("""SELECT DISTINCT 
-                            md5(CAST((dcas_ipis.*)AS text)) as uid, 
-                            bbl, 
-                            house_number, 
-                            street_name
-                        from dcas_ipis""",
-                    con=engine)
+    df = pd.read_sql("""
+        SELECT DISTINCT 
+            md5(CAST((dcas_ipis.*)AS text)) as uid, 
+            bbl, 
+            house_number, 
+            street_name
+        FROM dcas_ipis""", con=engine)
+
+    df.house_number = df.house_number.str.rstrip(r"¦")
     print(f"Input data shape: {df.shape}")
 
     records = df.to_dict("records")

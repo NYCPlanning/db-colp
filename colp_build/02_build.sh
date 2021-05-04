@@ -4,6 +4,7 @@ source config.sh
 START=$(date +%s);
 
 docker run --rm\
+    --network host\
     -v `pwd`:/home/colp_build/\
     -w /home/colp_build\
     -u $(id -u ${USER}):$(id -g ${USER}) \

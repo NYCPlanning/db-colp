@@ -34,7 +34,6 @@ zip -r output/output.zip output
 
 Upload latest &
 Upload $DATE
-rm -rf output
 
 wait 
 echo "Upload Complete"

@@ -23,6 +23,17 @@ OUTPUTS:
 
 -- Create QAQC table of unmappable input records
 DROP TABLE IF EXISTS ipis_unmapped;
+WITH 
+air_rights_merge as (
+    SELECT 
+        md5(CAST((a.*)AS text)) as dcas_ipis_uid,
+        a.*,
+        b.donating_bbl,
+        COALESCE(b.donating_bbl, a.bbl) as input_bbl
+    FROM dcas_ipis a
+    LEFT JOIN dof_air_rights_lots b
+    ON a.bbl = b.air_rights_bbl
+)
 SELECT 
     a.*,
 	b.geo_bbl,
@@ -30,15 +41,10 @@ SELECT
     b.rsn,
     b.msg
 INTO ipis_unmapped
-FROM dcas_ipis a
+FROM air_rights_merge a
 JOIN dcas_ipis_geocodes b
-ON a.bbl = b.input_bbl
-AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL)
-AND a.bbl IN (SELECT 
-	COALESCE(b.donating_bbl, a.bbl) as geo_bbl
-	FROM dcas_ipis a
-	LEFT JOIN dof_air_rights_lots b
-	ON a.bbl = b.air_rights_bbl);
+ON a.input_bbl = b.input_bbl
+AND a.dcas_ipis_uid IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL);
 
 
 -- Create QAQC table of records with modified house numbers

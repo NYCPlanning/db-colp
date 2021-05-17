@@ -23,7 +23,8 @@ OUTPUTS:
 
 -- Create QAQC table of unmappable input records
 DROP TABLE IF EXISTS ipis_unmapped;
-SELECT a.*,
+SELECT 
+    a.*,
 	b.geo_bbl,
     b.grc,
     b.rsn,
@@ -32,7 +33,13 @@ INTO ipis_unmapped
 FROM dcas_ipis a
 JOIN dcas_ipis_geocodes b
 ON a.bbl = b.input_bbl
-AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL);
+AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL)
+AND a.bbl IN (SELECT 
+	COALESCE(b.donating_bbl, a.bbl) as geo_bbl
+	FROM dcas_ipis a
+	LEFT JOIN dof_air_rights_lots b
+	ON a.bbl = b.air_rights_bbl);
+
 
 -- Create QAQC table of records with modified house numbers
 DROP TABLE IF EXISTS ipis_modified_hnums;

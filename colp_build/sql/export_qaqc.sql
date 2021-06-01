@@ -37,6 +37,7 @@ AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "
 -- Create QAQC table of records with modified house numbers
 DROP TABLE IF EXISTS ipis_modified_hnums;
 SELECT 
+    a.dcas_ipis_uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 
@@ -58,6 +59,7 @@ OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
 DROP TABLE IF EXISTS ipis_modified_names;
 WITH _ipis_modified_names AS (
 SELECT 
+    a.dcas_ipis_uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 

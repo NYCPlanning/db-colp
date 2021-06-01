@@ -90,8 +90,47 @@ air_rights_merge as (
         a.*,
         COALESCE(b.donating_bbl, a.bbl) as geo_bbl
     FROM dcas_ipis a
-    LEFT JOIN dof_air_rights_lots b
-    ON a.bbl = b.air_rights_bbl
+    LEFT JOIN
+	(
+        /* 
+        If an air rights bbl has multiple donating bbls,
+        take non-89 lot that matches the last 3 digits of the
+        air rights lot
+        */
+		SELECT 
+			donating_bbl, 
+			air_rights_bbl 
+		FROM dof_air_rights_lots
+		WHERE RIGHT(air_rights_bbl, 3) = RIGHT(donating_bbl, 3)
+		AND air_rights_bbl
+		IN (
+			SELECT 
+				air_rights_bbl 
+			FROM dof_air_rights_lots
+			WHERE SUBSTRING(donating_bbl, 7, 2) <> '89'
+			GROUP BY air_rights_bbl
+			HAVING COUNT(*) > 1
+			)
+	UNION
+        /*
+        Identify one-to-one relationship between air rights bbls and donating bbls,
+        again ignoring 89 lots
+        */
+		SELECT 
+			donating_bbl, 
+			air_rights_bbl
+		FROM dof_air_rights_lots
+		WHERE air_rights_bbl
+		IN (
+			SELECT 
+				air_rights_bbl 
+			FROM dof_air_rights_lots
+            WHERE SUBSTRING(donating_bbl, 7, 2) <> '89'
+			GROUP BY air_rights_bbl
+			HAVING COUNT(*) = 1
+			)
+	) b
+	ON a.bbl = b.air_rights_bbl
 ),
 geo_merge as (
     SELECT 

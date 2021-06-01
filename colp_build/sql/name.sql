@@ -59,7 +59,7 @@ TRIM(
 																				'LIBRARY '
 																				),
 																			'INDUST\sPARK|IND\.\sPARK|INDUST''L PARK',
-																			'INSUSTRIAL PARK'
+																			'INDUSTRIAL PARK'
 																			),
 																		'PCT\s|PCT\.\s',
 																		'PRECINCT '

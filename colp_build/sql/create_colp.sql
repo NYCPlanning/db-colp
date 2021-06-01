@@ -84,51 +84,38 @@ OUTPUTS:
 
 DROP TABLE IF EXISTS _colp CASCADE;
 WITH 
-air_rights_merge as (
-    SELECT 
+-- When identifying donating BBLs for air rights lots, do not include 89 lots
+air_rights_counts AS (
+	SELECT 
+		a.air_rights_bbl, 
+		a.donating_bbl, 
+		b.count
+	FROM dof_air_rights_lots a
+	JOIN (SELECT air_rights_bbl, COUNT(*) as lot_count
+		FROM dof_air_rights_lots 
+		GROUP BY air_rights_bbl) b
+	ON a.air_rights_bbl = b.air_rights_bbl
+	WHERE SUBSTRING(donating_bbl, 7, 2) <> '89'
+),
+-- If an air rights BBL matches with multiple donating BBLs, take the lot with matching last 3 digits
+air_rights_merge AS (
+	SELECT 
         md5(CAST((a.*)AS text)) as dcas_ipis_uid,
         a.*,
         COALESCE(b.donating_bbl, a.bbl) as geo_bbl
     FROM dcas_ipis a
     LEFT JOIN
-	(
-        /* 
-        If an air rights bbl has multiple donating bbls,
-        take non-89 lot that matches the last 3 digits of the
-        air rights lot
-        */
+    (
+	    SELECT 
+			air_rights_bbl, donating_bbl
+		FROM air_rights_counts
+		WHERE lot_count = 1
+		UNION
 		SELECT 
-			donating_bbl, 
-			air_rights_bbl 
-		FROM dof_air_rights_lots
-		WHERE RIGHT(air_rights_bbl, 3) = RIGHT(donating_bbl, 3)
-		AND air_rights_bbl
-		IN (
-			SELECT 
-				air_rights_bbl 
-			FROM dof_air_rights_lots
-			WHERE SUBSTRING(donating_bbl, 7, 2) <> '89'
-			GROUP BY air_rights_bbl
-			HAVING COUNT(*) > 1
-			)
-	UNION
-        /*
-        Identify one-to-one relationship between air rights bbls and donating bbls,
-        again ignoring 89 lots
-        */
-		SELECT 
-			donating_bbl, 
-			air_rights_bbl
-		FROM dof_air_rights_lots
-		WHERE air_rights_bbl
-		IN (
-			SELECT 
-				air_rights_bbl 
-			FROM dof_air_rights_lots
-            WHERE SUBSTRING(donating_bbl, 7, 2) <> '89'
-			GROUP BY air_rights_bbl
-			HAVING COUNT(*) = 1
-			)
+			air_rights_bbl, donating_bbl
+		FROM air_rights_counts
+		WHERE lot_count > 1 
+		AND RIGHT(air_rights_bbl, 3) = RIGHT(donating_bbl, 3)
 	) b
 	ON a.bbl = b.air_rights_bbl
 ),

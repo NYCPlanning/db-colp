@@ -72,7 +72,7 @@ FROM ipis_colp_georesults a
 JOIN dcas_ipis b
 ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
 WHERE b.parcel_name <> a."PARCELNAME")
-SELECT
+SELECT DISTINCT
     a.*,
     b.reviewed
 INTO ipis_modified_names

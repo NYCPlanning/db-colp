@@ -34,7 +34,6 @@ INPUTS:
         * bbl,
         house_number,
         street_name,
-        cd,
         parcel_name,
         agency,
         primary_use_code,
@@ -107,12 +106,6 @@ geo_merge as (
                 THEN b.geo_bbl
             ELSE b.bill_bbl
         END) as mapbbl,
-        -- Create temp cd field from IPIS, pre-pluto backfill
-        (CASE 
-            WHEN a.cd::text LIKE '_0' OR a.cd IS NULL 
-                THEN NULL
-            ELSE a.cd::text 
-        END) as dcas_cd,
         -- Include cleaned house number from source data
         CASE
             WHEN a.house_number = '0' THEN ''
@@ -194,8 +187,7 @@ pluto_merge AS (
     SELECT
         a.*,
         -- Get CD from pluto, using donating BBL for join
-        b.cd::text as pluto_cd,
-        COALESCE(b.cd::text, a.dcas_cd) as cd
+        b.cd::text as cd
     FROM sname_merge a 
     LEFT JOIN dcp_pluto b
     ON a.geo_bbl::numeric(19,8)::text = b.bbl::text
@@ -307,8 +299,6 @@ categorized as (
 SELECT DISTINCT
     dcas_ipis_uid,
     geo_bbl::numeric(19,8),
-    dcas_cd::smallint,
-    pluto_cd::smallint,
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",

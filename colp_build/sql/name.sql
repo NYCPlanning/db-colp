@@ -52,7 +52,7 @@ TRIM(
 																						'\sPK\s|\sPK-',
 																						' PARK '
 																						),
-																					'STA\s|STA.\s',
+																					'STA\s|STA\.\s|STAION\s',
 																					'STATION '
 																					),
 																				'LIBR\s',

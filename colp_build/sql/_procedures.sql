@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS corrections_applied;
 CREATE TABLE corrections_applied (
 	dcas_ipis_uid 	text,
 	field 	  		text,
-	current_value 	text,
+	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS corrections_not_applied;
 CREATE TABLE corrections_not_applied (
 	dcas_ipis_uid 	text,
 	field 	  		text,
-	current_value 	text,
+	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE correction (
 ) AS $BODY$
 DECLARE
     field_type text;
-    current_val text;
+    pre_corr_val text;
     applicable boolean;
 BEGIN
     EXECUTE format($n$
@@ -35,12 +35,12 @@ BEGIN
 
     EXECUTE format($n$
         SELECT a.%1$I::text FROM %2$I a WHERE a.dcas_ipis_uid = %3$L;
-    $n$, _field, _table, _dcas_ipis_uid) INTO current_val;
+    $n$, _field, _table, _dcas_ipis_uid) INTO pre_corr_val;
 
     EXECUTE format($n$
         SELECT %1$L::%3$s = %2$L::%3$s 
         OR (%1$L IS NULL AND %2$L IS NULL)
-    $n$, current_val, _old_val, field_type) INTO applicable;
+    $n$, pre_corr_val, _old_val, field_type) INTO applicable;
 
     IF applicable THEN 
         RAISE NOTICE 'Applying Correction';
@@ -51,13 +51,13 @@ BEGIN
         EXECUTE format($n$
             DELETE FROM corrections_applied WHERE dcas_ipis_uid = %1$L AND field = %2$L;
             INSERT INTO corrections_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _dcas_ipis_uid, _field, current_val, _old_val, _new_val);
+            $n$, _dcas_ipis_uid, _field, pre_corr_val, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction';
         EXECUTE format($n$
             DELETE FROM corrections_not_applied WHERE dcas_ipis_uid = %1$L AND field = %2$L;
             INSERT INTO corrections_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _dcas_ipis_uid, _field, current_val, _old_val, _new_val);
+            $n$, _dcas_ipis_uid, _field, pre_corr_val, _old_val, _new_val);
     END IF;
 
 END

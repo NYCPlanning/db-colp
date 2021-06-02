@@ -89,7 +89,7 @@ air_rights_counts AS (
 	SELECT 
 		a.air_rights_bbl, 
 		a.donating_bbl, 
-		b.count
+		b.lot_count
 	FROM dof_air_rights_lots a
 	JOIN (SELECT air_rights_bbl, COUNT(*) as lot_count
 		FROM dof_air_rights_lots 

@@ -60,7 +60,7 @@ OUTPUTS:
         block,
         lot,
         bbl,
-        billbbl,
+        mapbbl,
         cd,
         hnum,
         sname,
@@ -105,7 +105,7 @@ geo_merge as (
             WHEN b.bill_bbl = '0000000000' OR b.bill_bbl IS NULL
                 THEN b.geo_bbl
             ELSE b.bill_bbl
-        END) as billbbl,
+        END) as mapbbl,
         -- Include cleaned house number from source data
         CASE
             WHEN a.house_number = '0' THEN ''
@@ -303,7 +303,7 @@ SELECT DISTINCT
     trim(block)::numeric(10,0) as "BLOCK",
     lot::smallint as "LOT",
     bbl::numeric(19,8) as "BBL",
-    billbbl::numeric(19,8) as "BILLBBL",
+    mapbbl::numeric(19,8) as "MAPBBL",
     cd::smallint as "CD",
     hnum::varchar(20) as "HNUM",
     sname::varchar(40) as "SNAME",

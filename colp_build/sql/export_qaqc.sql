@@ -88,7 +88,7 @@ DROP TABLE IF EXISTS ipis_colp_geoerrors;
 SELECT 
     a.dcas_ipis_uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -159,7 +159,7 @@ DROP TABLE IF EXISTS ipis_sname_errors;
 SELECT 
     a.dcas_ipis_uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -204,7 +204,7 @@ DROP TABLE IF EXISTS ipis_hnum_errors;
 SELECT 
     a.dcas_ipis_uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -249,7 +249,7 @@ DROP TABLE IF EXISTS ipis_bbl_errors;
 SELECT 
     a.dcas_ipis_uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -288,7 +288,7 @@ ON a.dcas_ipis_uid = b.dcas_ipis_uid
 Include records where billing BBL associated with the 
 DCAS input BBL does not match the address's returned BBL
 */
-WHERE a.bbl_1b::numeric <> b."BILLBBL"
+WHERE a.bbl_1b::numeric <> b."MAPBBL"
 ;
 
 -- Create QAQC table of mismatch between IPIS community district and PLUTO

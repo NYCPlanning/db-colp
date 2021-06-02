@@ -291,6 +291,23 @@ DCAS input BBL does not match the address's returned BBL
 WHERE a.bbl_1b::numeric <> b."BILLBBL"
 ;
 
+-- Create QAQC table of mismatch between IPIS community district and PLUTO
+DROP TABLE IF EXISTS ipis_cd_errors;
+SELECT
+    a.dcas_ipis_uid,
+    a."BBL",
+    a."CD" as pluto_cd,
+    b.cd as dcas_cd,
+    a."ADDRESS",
+    a."PARCELNAME"
+INTO ipis_cd_errors
+FROM _colp a
+JOIN dcas_ipis b
+ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+WHERE a."CD" <> b.cd::smallint
+OR (a."CD" IS NULL AND b.cd IS NOT NULL)
+OR (a."CD" IS NOT NULL AND b.cd IS NULL);
+
 -- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;
 WITH 

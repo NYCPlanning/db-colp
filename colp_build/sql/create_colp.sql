@@ -106,6 +106,12 @@ geo_merge as (
                 THEN b.geo_bbl
             ELSE b.bill_bbl
         END) as billbbl,
+        -- Create temp cd field from IPIS for use with QAQC
+        (CASE 
+            WHEN a.cd::text LIKE '_0' OR a.cd IS NULL 
+                THEN NULL
+            ELSE a.cd::text 
+        END) as dcas_cd,
         -- Include cleaned house number from source data
         CASE
             WHEN a.house_number = '0' THEN ''

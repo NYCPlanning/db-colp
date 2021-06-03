@@ -37,7 +37,7 @@ def geocode(inputs):
 
 if __name__ == '__main__':
     df = pd.read_sql('''
-                        SELECT DISTINCT geo_bbl 
+                        SELECT DISTINCT geo_bbl as bbl
                         FROM geo_inputs
                     ''',
                     con=engine)

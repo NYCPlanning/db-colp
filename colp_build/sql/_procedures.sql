@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS corrections_applied;
 CREATE TABLE corrections_applied (
-	dcas_ipis_uid 	text,
+	uid 	text,
 	field 	  		text,
 	pre_corr_value 	text,
 	old_value 		text,
@@ -9,7 +9,7 @@ CREATE TABLE corrections_applied (
 
 DROP TABLE IF EXISTS corrections_not_applied;
 CREATE TABLE corrections_not_applied (
-	dcas_ipis_uid 	text,
+	uid 	text,
 	field 	  		text,
 	pre_corr_value 	text,
 	old_value 		text,
@@ -19,7 +19,7 @@ CREATE TABLE corrections_not_applied (
 DROP PROCEDURE IF EXISTS correction;
 CREATE OR REPLACE PROCEDURE correction (
     _table text,
-    _dcas_ipis_uid text,
+    _uid text,
     _field text,
     _old_val text,
     _new_val text
@@ -34,8 +34,8 @@ BEGIN
     $n$, _field, _table) INTO field_type;
 
     EXECUTE format($n$
-        SELECT a.%1$I::text FROM %2$I a WHERE a.dcas_ipis_uid = %3$L;
-    $n$, _field, _table, _dcas_ipis_uid) INTO pre_corr_val;
+        SELECT a.%1$I::text FROM %2$I a WHERE a.uid = %3$L;
+    $n$, _field, _table, _uid) INTO current_val;
 
     EXECUTE format($n$
         SELECT %1$L::%3$s = %2$L::%3$s 
@@ -45,19 +45,19 @@ BEGIN
     IF applicable THEN 
         RAISE NOTICE 'Applying Correction';
         EXECUTE format($n$
-            UPDATE %1$I SET %2$I = %3$L::%4$s WHERE dcas_ipis_uid = %5$L;
-            $n$, _table, _field, _new_val, field_type, _dcas_ipis_uid);
+            UPDATE %1$I SET %2$I = %3$L::%4$s WHERE uid = %5$L;
+            $n$, _table, _field, _new_val, field_type, _uid);
 
         EXECUTE format($n$
-            DELETE FROM corrections_applied WHERE dcas_ipis_uid = %1$L AND field = %2$L;
+            DELETE FROM corrections_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO corrections_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _dcas_ipis_uid, _field, pre_corr_val, _old_val, _new_val);
+            $n$, _uid, _field, current_val, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction';
         EXECUTE format($n$
-            DELETE FROM corrections_not_applied WHERE dcas_ipis_uid = %1$L AND field = %2$L;
+            DELETE FROM corrections_not_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO corrections_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _dcas_ipis_uid, _field, pre_corr_val, _old_val, _new_val);
+            $n$, _uid, _field, current_val, _old_val, _new_val);
     END IF;
 
 END
@@ -70,7 +70,7 @@ CREATE OR REPLACE PROCEDURE apply_correction (
     _corrections text
 ) AS $BODY$
 DECLARE 
-    _dcas_ipis_uid text;
+    _uid text;
     _field text;
     _old_value text;
     _new_value text;
@@ -79,14 +79,14 @@ BEGIN
     SELECT array_agg(column_name) FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = _table INTO _valid_fields;
 
-    FOR _dcas_ipis_uid, _field, _old_value, _new_value IN 
+    FOR _uid, _field, _old_value, _new_value IN 
         EXECUTE FORMAT($n$
-            SELECT dcas_ipis_uid, field, old_value, new_value 
+            SELECT uid, field, old_value, new_value 
             FROM %1$s
             WHERE field = any(%2$L)
         $n$, _corrections, _valid_fields)
     LOOP
-        CALL correction(_table, _dcas_ipis_uid, _field, _old_value, _new_value);
+        CALL correction(_table, _uid, _field, _old_value, _new_value);
     END LOOP;
 END
 $BODY$ LANGUAGE plpgsql;

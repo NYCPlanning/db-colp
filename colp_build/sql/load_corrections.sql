@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS corrections;
 CREATE TABLE corrections(
-    dcas_ipis_uid text,
+    uid text,
     field text,
     old_value text,
     new_value text,

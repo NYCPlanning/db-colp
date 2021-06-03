@@ -16,5 +16,5 @@ SELECT
 INTO ipis_colp_georesults
 FROM geo_qaqc a
 JOIN _colp b
-ON a.dcas_ipis_uid = b.dcas_ipis_uid
+ON a.uid = b.uid
 ;

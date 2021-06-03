@@ -41,7 +41,7 @@ def run_1b(inputs):
     street_name = inputs.get("street_name")
     bbl = inputs.get("bbl")
     geo_dcas = geocode(house_number, street_name, bbl[0])
-    return {"dcas_ipis_uid": uid,
+    return {"uid": uid,
             "dcas_bbl": bbl,
             "dcas_hnum": house_number,
             "dcas_sname": street_name, 
@@ -62,11 +62,11 @@ def run_1b(inputs):
 if __name__ == "__main__":
     df = pd.read_sql("""
         SELECT DISTINCT 
-            md5(CAST((dcas_ipis.*)AS text)) as uid, 
-            bbl, 
+            uid, 
+            ipis_bbl as bbl, 
             house_number, 
             street_name
-        FROM dcas_ipis""", con=engine)
+        FROM geo_inputs""", con=engine)
 
     df.house_number = df.house_number.str.rstrip(r"¦")
     print(f"Input data shape: {df.shape}")

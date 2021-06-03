@@ -32,12 +32,12 @@ INTO ipis_unmapped
 FROM dcas_ipis a
 JOIN dcas_ipis_geocodes b
 ON a.bbl = b.input_bbl
-AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT dcas_ipis_uid FROM _colp WHERE "XCOORD" IS NULL);
+AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT uid FROM _colp WHERE "XCOORD" IS NULL);
 
 -- Create QAQC table of records with modified house numbers
 DROP TABLE IF EXISTS ipis_modified_hnums;
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 
@@ -50,7 +50,7 @@ SELECT
 INTO ipis_modified_hnums
 FROM ipis_colp_georesults a
 JOIN dcas_ipis b
-ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+ON a.uid = md5(CAST((b.*)AS text))
 WHERE a.dcas_hnum <> a.display_hnum
 OR (a.dcas_hnum IS NOT NULL AND a.display_hnum = '')
 OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
@@ -59,7 +59,7 @@ OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
 DROP TABLE IF EXISTS ipis_modified_names;
 WITH _ipis_modified_names AS (
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 
@@ -72,7 +72,7 @@ SELECT
     b.primary_use_text
 FROM ipis_colp_georesults a
 JOIN dcas_ipis b
-ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+ON a.uid = md5(CAST((b.*)AS text))
 WHERE b.parcel_name <> a."PARCELNAME")
 SELECT DISTINCT
     a.*,
@@ -88,7 +88,7 @@ AND a.display_name = b.display_name
 -- Create QAQC table of addresses that return errors from 1B
 DROP TABLE IF EXISTS ipis_colp_geoerrors;
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl,
     b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
@@ -124,7 +124,7 @@ SELECT
 INTO ipis_colp_geoerrors
 FROM ipis_colp_georesults a
 JOIN _colp b
-ON a.dcas_ipis_uid = b.dcas_ipis_uid
+ON a.uid = b.uid
 -- Exclude records where both GRC are 00
 WHERE (a.grc_1e <> '00' OR a.grc_1a <> '00')
 /* 
@@ -159,7 +159,7 @@ AND NOT (
 -- Create QAQC table of addresses that return streetname errors from 1B
 DROP TABLE IF EXISTS ipis_sname_errors;
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl,
     b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
@@ -195,7 +195,7 @@ SELECT
 INTO ipis_sname_errors
 FROM ipis_colp_georesults a
 JOIN _colp b
-ON a.dcas_ipis_uid = b.dcas_ipis_uid
+ON a.uid = b.uid
 -- Include records where one or both GRC is 11 or EE
 WHERE (a.grc_1e IN ('11','EE') 
         OR a.grc_1a IN ('11','EE'))
@@ -204,7 +204,7 @@ WHERE (a.grc_1e IN ('11','EE')
 -- Create QAQC table of addresses that return address errors from 1B
 DROP TABLE IF EXISTS ipis_hnum_errors;
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl,
     b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
@@ -240,7 +240,7 @@ SELECT
 INTO ipis_hnum_errors
 FROM ipis_colp_georesults a
 JOIN _colp b
-ON a.dcas_ipis_uid = b.dcas_ipis_uid
+ON a.uid = b.uid
 -- Include records where one or both GRC is 41 or 42
 WHERE (a.grc_1e IN ('41','42') 
         OR a.grc_1a IN ('41','42'))
@@ -249,7 +249,7 @@ WHERE (a.grc_1e IN ('41','42')
 -- Create QAQC table of records where address isn't valid for BBL
 DROP TABLE IF EXISTS ipis_bbl_errors;
 SELECT 
-    a.dcas_ipis_uid,
+    a.uid,
     a.dcas_bbl,
     b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
@@ -285,7 +285,7 @@ SELECT
 INTO ipis_bbl_errors
 FROM ipis_colp_georesults a
 JOIN _colp b
-ON a.dcas_ipis_uid = b.dcas_ipis_uid
+ON a.uid = b.uid
 /* 
 Include records where billing BBL associated with the 
 DCAS input BBL does not match the address's returned BBL
@@ -296,7 +296,7 @@ WHERE a.bbl_1b::numeric <> b."MAPBBL"
 -- Create QAQC table of mismatch between IPIS community district and PLUTO
 DROP TABLE IF EXISTS ipis_cd_errors;
 SELECT
-    a.dcas_ipis_uid,
+    a.uid,
     a."BBL",
     a."CD" as pluto_cd,
     b.cd as dcas_cd,
@@ -305,7 +305,7 @@ SELECT
 INTO ipis_cd_errors
 FROM _colp a
 JOIN dcas_ipis b
-ON a.dcas_ipis_uid = md5(CAST((b.*)AS text))
+ON a.uid = md5(CAST((b.*)AS text))
 WHERE a."CD" <> b.cd::smallint
 OR (a."CD" IS NULL AND b.cd IS NOT NULL)
 OR (a."CD" IS NOT NULL AND b.cd IS NULL);

@@ -82,19 +82,20 @@ OUTPUTS:
 */
 
 DROP TABLE IF EXISTS _colp CASCADE;
-WITH 
-air_rights_merge as (
+WITH
+bbl_merge as (
     SELECT 
-        md5(CAST((a.*)AS text)) as dcas_ipis_uid,
-        a.*,
-        COALESCE(b.donating_bbl, a.bbl) as geo_bbl
+        b.uid,
+        b.geo_bbl,
+        a.*
     FROM dcas_ipis a
-    LEFT JOIN dof_air_rights_lots b
-    ON a.bbl = b.air_rights_bbl
+    LEFT JOIN geo_inputs b
+    ON md5(CAST((a.*)AS text)) = b.uid
 ),
+
 geo_merge as (
     SELECT 
-        dcas_ipis_uid,
+        uid,
         a.boro as borough,
         a.block,
         a.lot,
@@ -164,7 +165,7 @@ geo_merge as (
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
             ELSE NULL
         END) as geom
-    FROM air_rights_merge a
+    FROM bbl_merge a
     LEFT JOIN dcas_ipis_geocodes b
     ON a.geo_bbl = b.input_bbl
     WHERE a.owner <> 'R'
@@ -180,7 +181,7 @@ sname_merge AS (
         END) as address
         FROM geo_merge a
         LEFT JOIN geo_qaqc b
-        ON a.dcas_ipis_uid = b.dcas_ipis_uid
+        ON a.uid = b.uid
 ),
 
 pluto_merge AS (
@@ -297,7 +298,7 @@ categorized as (
 
 -- Reorder columns for output
 SELECT DISTINCT
-    dcas_ipis_uid,
+    uid,
     geo_bbl::numeric(19,8),
     borough::varchar(2) as "BOROUGH",
     trim(block)::numeric(10,0) as "BLOCK",

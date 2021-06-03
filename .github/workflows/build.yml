@@ -46,7 +46,7 @@ jobs:
       working-directory: colp_build
       run: ./02_build.sh
 
-    - name: Create exports and upload to s3 ...
+    - name: Upload outputs to s3 ...
       if: github.ref == 'refs/heads/main'
       working-directory: colp_build
       run: ./03_export.sh

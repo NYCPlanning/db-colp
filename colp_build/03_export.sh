@@ -1,10 +1,6 @@
 #!/bin/bash
 source config.sh
 
-echo "Generate output tables"
-psql $BUILD_ENGINE -f sql/export_colp.sql
-psql $BUILD_ENGINE -f sql/export_qaqc.sql
-
 rm -rf output
 mkdir -p output 
 (

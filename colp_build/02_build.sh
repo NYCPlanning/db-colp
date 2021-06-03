@@ -3,6 +3,8 @@ source config.sh
 
 START=$(date +%s);
 
+psql $BUILD_ENGINE -f sql/geo_inputs.sql
+
 docker run --rm\
     --network host\
     -v `pwd`:/home/colp_build/\
@@ -13,9 +15,9 @@ docker run --rm\
                                                 python3 -m python.geocode"
 
 psql $BUILD_ENGINE -f sql/_procedures.sql
-psql $BUILD_ENGINE -f sql/name.sql
+psql $BUILD_ENGINE -f sql/clean_parcelname.sql
 psql $BUILD_ENGINE -f sql/create_colp.sql
-psql $BUILD_ENGINE -f sql/qaqc.sql
+psql $BUILD_ENGINE -f sql/geo_qaqc.sql
 
 psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'corrections');"
 

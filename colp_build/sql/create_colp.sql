@@ -84,6 +84,16 @@ OUTPUTS:
 
 DROP TABLE IF EXISTS _colp CASCADE;
 WITH
+bbl_merge as (
+    SELECT 
+        b.dcas_ipis_uid,
+        b.geo_bbl,
+        a.*
+    FROM dcas_ipis a
+    LEFT JOIN geo_inputs b
+    ON md5(CAST((a.*)AS text)) = b.dcas_ipis_uid
+),
+
 geo_merge as (
     SELECT 
         dcas_ipis_uid,
@@ -162,7 +172,7 @@ geo_merge as (
             THEN ST_SetSRID(ST_MakePoint(b.longitude::double precision, b.latitude::double precision),4326)
             ELSE NULL
         END) as geom
-    FROM air_rights_merge a
+    FROM bbl_merge a
     LEFT JOIN dcas_ipis_geocodes b
     ON a.geo_bbl = b.input_bbl
     WHERE a.owner <> 'R'

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS corrections_applied;
-CREATE TABLE corrections_applied (
+DROP TABLE IF EXISTS modifications_applied;
+CREATE TABLE modifications_applied (
 	uid 	text,
 	field 	  		text,
 	pre_corr_value 	text,
@@ -7,8 +7,8 @@ CREATE TABLE corrections_applied (
 	new_value 		text
 );
 
-DROP TABLE IF EXISTS corrections_not_applied;
-CREATE TABLE corrections_not_applied (
+DROP TABLE IF EXISTS modifications_not_applied;
+CREATE TABLE modifications_not_applied (
 	uid 	text,
 	field 	  		text,
 	pre_corr_value 	text,
@@ -49,14 +49,14 @@ BEGIN
             $n$, _table, _field, _new_val, field_type, _uid);
 
         EXECUTE format($n$
-            DELETE FROM corrections_applied WHERE uid = %1$L AND field = %2$L;
-            INSERT INTO corrections_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
+            DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L;
+            INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
             $n$, _uid, _field, current_val, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction';
         EXECUTE format($n$
-            DELETE FROM corrections_not_applied WHERE uid = %1$L AND field = %2$L;
-            INSERT INTO corrections_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
+            DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
+            INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
             $n$, _uid, _field, current_val, _old_val, _new_val);
     END IF;
 
@@ -67,7 +67,7 @@ $BODY$ LANGUAGE plpgsql;
 DROP PROCEDURE IF EXISTS apply_correction;
 CREATE OR REPLACE PROCEDURE apply_correction (
     _table text, 
-    _corrections text
+    _modifications text
 ) AS $BODY$
 DECLARE 
     _uid text;
@@ -84,7 +84,7 @@ BEGIN
             SELECT uid, field, old_value, new_value 
             FROM %1$s
             WHERE field = any(%2$L)
-        $n$, _corrections, _valid_fields)
+        $n$, _modifications, _valid_fields)
     LOOP
         CALL correction(_table, _uid, _field, _old_value, _new_value);
     END LOOP;

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS corrections;
-CREATE TABLE corrections(
+DROP TABLE IF EXISTS modifications;
+CREATE TABLE modifications(
     uid text,
     field text,
     old_value text,
@@ -9,7 +9,7 @@ CREATE TABLE corrections(
     notes text
 );
 
-\COPY corrections FROM '_data/corrections.csv' DELIMITER ',' CSV HEADER;
+\COPY modifications FROM '_data/modifications.csv' DELIMITER ',' CSV HEADER;
 
 DROP TABLE IF EXISTS reviewed_modified_names;
 CREATE TABLE reviewed_modified_names(

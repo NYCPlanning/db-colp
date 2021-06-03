@@ -5,7 +5,7 @@ SELECT
     "BLOCK",
     "LOT",
     "BBL",
-    "BILLBBL",
+    "MAPBBL",
     "CD",
     "HNUM",
     "SNAME",

@@ -52,14 +52,14 @@ TRIM(
 																						'\sPK\s|\sPK-',
 																						' PARK '
 																						),
-																					'STA\s|STA.\s',
+																					'STA\s|STA\.\s|STAION\s',
 																					'STATION '
 																					),
 																				'LIBR\s',
 																				'LIBRARY '
 																				),
 																			'INDUST\sPARK|IND\.\sPARK|INDUST''L PARK',
-																			'INSUSTRIAL PARK'
+																			'INDUSTRIAL PARK'
 																			),
 																		'PCT\s|PCT\.\s',
 																		'PRECINCT '

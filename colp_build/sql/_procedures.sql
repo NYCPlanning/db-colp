@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS corrections_applied;
 CREATE TABLE corrections_applied (
 	uid 	text,
 	field 	  		text,
-	current_value 	text,
+	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS corrections_not_applied;
 CREATE TABLE corrections_not_applied (
 	uid 	text,
 	field 	  		text,
-	current_value 	text,
+	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE correction (
 ) AS $BODY$
 DECLARE
     field_type text;
-    current_val text;
+    pre_corr_val text;
     applicable boolean;
 BEGIN
     EXECUTE format($n$
@@ -40,7 +40,7 @@ BEGIN
     EXECUTE format($n$
         SELECT %1$L::%3$s = %2$L::%3$s 
         OR (%1$L IS NULL AND %2$L IS NULL)
-    $n$, current_val, _old_val, field_type) INTO applicable;
+    $n$, pre_corr_val, _old_val, field_type) INTO applicable;
 
     IF applicable THEN 
         RAISE NOTICE 'Applying Correction';

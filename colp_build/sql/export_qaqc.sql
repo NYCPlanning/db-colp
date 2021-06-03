@@ -37,6 +37,7 @@ AND md5(CAST((a.*)AS text)) IN (SELECT DISTINCT uid FROM _colp WHERE "XCOORD" IS
 -- Create QAQC table of records with modified house numbers
 DROP TABLE IF EXISTS ipis_modified_hnums;
 SELECT 
+    a.uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 
@@ -58,6 +59,7 @@ OR (a.dcas_hnum IS NULL AND a.display_hnum <> '');
 DROP TABLE IF EXISTS ipis_modified_names;
 WITH _ipis_modified_names AS (
 SELECT 
+    a.uid,
     a.dcas_bbl, 
     a.dcas_hnum, 
     a.display_hnum, 
@@ -72,7 +74,7 @@ FROM ipis_colp_georesults a
 JOIN dcas_ipis b
 ON a.uid = md5(CAST((b.*)AS text))
 WHERE b.parcel_name <> a."PARCELNAME")
-SELECT
+SELECT DISTINCT
     a.*,
     b.reviewed
 INTO ipis_modified_names
@@ -88,7 +90,7 @@ DROP TABLE IF EXISTS ipis_colp_geoerrors;
 SELECT 
     a.uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -159,7 +161,7 @@ DROP TABLE IF EXISTS ipis_sname_errors;
 SELECT 
     a.uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -204,7 +206,7 @@ DROP TABLE IF EXISTS ipis_hnum_errors;
 SELECT 
     a.uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -249,7 +251,7 @@ DROP TABLE IF EXISTS ipis_bbl_errors;
 SELECT 
     a.uid,
     a.dcas_bbl,
-    b."BILLBBL" as dcas_bill_bbl,
+    b."MAPBBL" as dcas_map_bbl,
     a.display_hnum,
     a.dcas_hnum,
     a.dcas_sname,
@@ -288,22 +290,25 @@ ON a.uid = b.uid
 Include records where billing BBL associated with the 
 DCAS input BBL does not match the address's returned BBL
 */
-WHERE a.bbl_1b::numeric <> b."BILLBBL"
+WHERE a.bbl_1b::numeric <> b."MAPBBL"
 ;
 
 -- Create QAQC table of mismatch between IPIS community district and PLUTO
 DROP TABLE IF EXISTS ipis_cd_errors;
 SELECT
-    uid,
-    "BBL",
-    dcas_cd,
-    pluto_cd,
-    "CD"
+    a.uid,
+    a."BBL",
+    a."CD" as pluto_cd,
+    b.cd as dcas_cd,
+    a."ADDRESS",
+    a."PARCELNAME"
 INTO ipis_cd_errors
-FROM _colp
-WHERE dcas_cd <> pluto_cd
-OR (dcas_cd IS NULL AND pluto_cd IS NOT NULL)
-OR (dcas_cd IS NOT NULL AND pluto_cd IS NULL);
+FROM _colp a
+JOIN dcas_ipis b
+ON a.uid = md5(CAST((b.*)AS text))
+WHERE a."CD" <> b.cd::smallint
+OR (a."CD" IS NULL AND b.cd IS NOT NULL)
+OR (a."CD" IS NOT NULL AND b.cd IS NULL);
 
 -- Create QAQC table of version-to-version changes in the number of records per use type
 DROP TABLE IF EXISTS usetype_changes;

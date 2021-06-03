@@ -41,7 +41,7 @@ def run_1b(inputs):
     street_name = inputs.get("street_name")
     bbl = inputs.get("bbl")
     geo_dcas = geocode(house_number, street_name, bbl[0])
-    return {"dcas_ipis_uid": uid,
+    return {"uid": uid,
             "dcas_bbl": bbl,
             "dcas_hnum": house_number,
             "dcas_sname": street_name, 
@@ -62,7 +62,7 @@ def run_1b(inputs):
 if __name__ == "__main__":
     df = pd.read_sql("""
         SELECT DISTINCT 
-            dcas_ipis_uid, 
+            uid, 
             ipis_bbl as bbl, 
             house_number, 
             street_name

@@ -86,17 +86,17 @@ DROP TABLE IF EXISTS _colp CASCADE;
 WITH
 bbl_merge as (
     SELECT 
-        b.dcas_ipis_uid,
+        b.uid,
         b.geo_bbl,
         a.*
     FROM dcas_ipis a
     LEFT JOIN geo_inputs b
-    ON md5(CAST((a.*)AS text)) = b.dcas_ipis_uid
+    ON md5(CAST((a.*)AS text)) = b.uid
 ),
 
 geo_merge as (
     SELECT 
-        dcas_ipis_uid,
+        uid,
         a.boro as borough,
         a.block,
         a.lot,
@@ -188,7 +188,7 @@ sname_merge AS (
         END) as address
         FROM geo_merge a
         LEFT JOIN geo_qaqc b
-        ON a.dcas_ipis_uid = b.dcas_ipis_uid
+        ON a.uid = b.uid
 ),
 
 pluto_merge AS (
@@ -306,7 +306,7 @@ categorized as (
 
 -- Reorder columns for output
 SELECT DISTINCT
-    dcas_ipis_uid,
+    uid,
     geo_bbl::numeric(19,8),
     dcas_cd::smallint,
     pluto_cd::smallint,

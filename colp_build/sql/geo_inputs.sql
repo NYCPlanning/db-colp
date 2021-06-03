@@ -23,7 +23,7 @@ INPUTS:
 
 OUTPUTS: 
     geo_inputs (
-        dcas_ipis_uid,
+        uid,
         house_number,
         street_name,
         ipis_bbl,
@@ -48,7 +48,7 @@ air_rights_counts AS (
 )
 -- If an air rights BBL matches with multiple donating BBLs, take the lot with matching last 3 digits
 SELECT 
-    md5(CAST((a.*)AS text)) as dcas_ipis_uid,
+    md5(CAST((a.*)AS text)) as uid,
     a.house_number, 
     a.street_name,
     a.bbl as ipis_bbl,

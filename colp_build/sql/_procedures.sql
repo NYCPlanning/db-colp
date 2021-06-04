@@ -35,7 +35,7 @@ BEGIN
 
     EXECUTE format($n$
         SELECT a.%1$I::text FROM %2$I a WHERE a.uid = %3$L;
-    $n$, _field, _table, _uid) INTO current_val;
+    $n$, _field, _table, _uid) INTO pre_corr_val;
 
     EXECUTE format($n$
         SELECT %1$L::%3$s = %2$L::%3$s 
@@ -51,13 +51,13 @@ BEGIN
         EXECUTE format($n$
             DELETE FROM corrections_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO corrections_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, current_val, _old_val, _new_val);
+            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction';
         EXECUTE format($n$
             DELETE FROM corrections_not_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO corrections_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, current_val, _old_val, _new_val);
+            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
     END IF;
 
 END

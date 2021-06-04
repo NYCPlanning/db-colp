@@ -13,8 +13,8 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | [ipis_modified_hnums.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_hnums.csv) | QAQC table of records with modified house numbers |
 | [ipis_modified_names.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_names.csv) | QAQC table of records with modified parcel names |
 | [usetype_changes.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/usetype_changes.csv) | QAQC table of version-to-version changes in the number of records per use type |
-| [corrections_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/corrections_applied.csv) | Table of manual corrections that were applied |
-| [corrections_not_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/corrections_not_applied.csv) | Table of manual corrections that existed in the corrections table, but failed to get applied |
+| [modifications_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/modifications_applied.csv) | Table of manual modifications that were applied |
+| [modifications_not_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/modifications_not_applied.csv) | Table of manual modifications that existed in the modifications table, but failed to get applied |
 | [ipis_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_unmapped.csv) | QAQC table of unmappable input records |
 | [ipis_colp_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_colp_geoerrors.csv) | QAQC table of addresses that return errors (or warnings type 1-9, B, C, I, J) from 1B |
 | [ipis_sname_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_sname_errors.csv) | QAQC table of addresses that return streetname errors (GRC is 11 or EE) from 1B |
@@ -30,6 +30,12 @@ Look-up tables for agency abbreviations and use types are availaible in CSV form
 To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/log.md), then commit with **`[build]`** in the commit message. More detailed intructions for building COLP are contained in [`maintenance/instructions.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/instructions.md).
 
 ## Data Dictionary
+`UID`
++ **Longform name:** Unique ID
++ **Data source:** Department of City Planning 
++ **Description:** Unique identifier created from a hash of all fields for the record on the IPIS source file.  As long as no fields change on the record, this identifier is static between versions of COLP. 
++ **Data type:** `text`  
++ **Example:** cbe20732be28f6ab445289d7a67bb241
 
 `BOROUGH`
 + **Longform name:** Borough 
@@ -55,10 +61,10 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 + **Data type:** `double` 
 + **Example:** 1016370141 
 
-`BILLBBL` 
-+ **Longform name:** Billing BBL 
+`MAPBBL` 
++ **Longform name:** Mapped BBL 
 + **Data source:** Department of City Planning 
-+ **Description:** For condominium lots, the billing BBL is the 75nn-series record shown on the tax map and in MapPLUTO. It is generally associated with the condominium management organization. For non-condo lots, BILLBBL is the same as BBL. 
++ **Description:** he mapped BBL is the BBL used to map the record. For condominium lots, the mapped BBL is the billing BBL, which is the 75nn-series record shown on the tax map and in MapPLUTO. It is generally associated with the condominium management organization. For air rights lots, the mapped BBL is the donating BBL from the Air_Rights_Lot table in the Department of Finance’s Digital Tax Map. If there is more than one donating BBL, the one whose lot number most closely matches that of the air rights lot is used.  For all other lots, MAPBBL is the same as BBL.   
 + **Data type:** `double` 
 + **Example:** 1016370141 
 
@@ -83,7 +89,7 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 
 `NAME`
 + **Longform name:** Parcel name 
-+ **Description:** Name of the parcel or facility on the lot     
++ **Description:** Name of the parcel or facility on the lot. DCP applies some modifications to parcel names to improve readability. Some abbreviations are expanded programmatically. Other modifications are made after manual research. For the latter, DCPEDITED = "Y".     
 + **Data type:** `text`
 + **Example:** AGUILAR BRANCH LIBRARY 
 
@@ -194,6 +200,13 @@ To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlan
 + **Description:** Longitude based on the Geosupport label point for the billing BBL. Coordinate system is NAD_1983. 
 + **Data type:** double 
 + **Example:** -73.943479
+
+`DCPEDITED` 
++ **Longform name:** DCP Edited   
++ **Data source:** Department of City Planning 
++ **Description:** City Planning modifies some records to correct street names or normalize parcel names when programmatic cleaning are insufficient. If a field has been manually modified, the original value can be found in modifications_applied.csv (see outputs above).
++ **Data type:** text 
++ **Example:** Y
 
 `GEOM`
 + **Longform name:** Geometry

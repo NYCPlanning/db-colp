@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS colp;
 SELECT 
-    uid,
+    uid::varchar(32) as uid,
     "BOROUGH",
     "BLOCK",
     "LOT",

@@ -25,8 +25,10 @@ SELECT
     "YCOORD",
     "LATITUDE",
     "LONGITUDE",
-    "GEOM",
-    (uid IN (SELECT DISTINCT uid FROM modifications_applied))::int::smallint as "DCPEDITED"
+    (CASE
+        WHEN uid IN (SELECT DISTINCT uid FROM modifications_applied) THEN 'Y'
+    END) as "DCPEDITED",
+    "GEOM"
 INTO colp
 FROM _colp
 WHERE "XCOORD" IS NOT NULL;

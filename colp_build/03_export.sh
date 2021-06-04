@@ -20,8 +20,8 @@ mkdir -p output
     CSV_export ipis_modified_hnums
     CSV_export ipis_modified_names
     CSV_export usetype_changes
-    CSV_export corrections_applied
-    CSV_export corrections_not_applied
+    CSV_export modifications_applied
+    CSV_export modifications_not_applied
     echo "[$(date)] $DATE" > version.txt
 
 )

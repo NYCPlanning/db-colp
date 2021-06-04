@@ -26,7 +26,7 @@ SELECT
     "LATITUDE",
     "LONGITUDE",
     "GEOM",
-    (uid IN (SELECT DISTINCT uid FROM corrections_applied))::int::smallint as "DCPEDITED"
+    (uid IN (SELECT DISTINCT uid FROM modifications_applied))::int::smallint as "DCPEDITED"
 INTO colp
 FROM _colp
 WHERE "XCOORD" IS NOT NULL;

@@ -38,15 +38,11 @@ jobs:
         mc alias set spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
 
     - name: Dataloading ...
-      working-directory: colp_build
-      shell: bash
-      run: ./01_dataloading.sh
+      run: ./colp.sh dataloading
 
     - name: Build COLP ...
-      working-directory: colp_build
-      run: ./02_build.sh
+      run: ./colp.sh build
 
     - name: Upload outputs to s3 ...
       if: github.ref == 'refs/heads/main'
-      working-directory: colp_build
-      run: ./03_export.sh
+      run: ./colp.sh export

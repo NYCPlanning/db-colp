@@ -1,9 +1,8 @@
 #!/bin/bash
-source config.sh
+source bash/config.sh
 
 rm -rf output
-mkdir -p output 
-(
+mkdir -p output && (
     cd output
 
     echo "Exporting COLP"

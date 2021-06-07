@@ -1,7 +1,5 @@
 #!/bin/bash
-source config.sh
-
-START=$(date +%s);
+source bash/config.sh
 
 psql $BUILD_ENGINE -f sql/geo_inputs.sql
 
@@ -24,7 +22,3 @@ psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications');"
 echo "Generate output tables"
 psql $BUILD_ENGINE -f sql/export_colp.sql
 psql $BUILD_ENGINE -f sql/export_qaqc.sql
-
-END=$(date +%s);
-echo $((END-START)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds elapsed."}'
-

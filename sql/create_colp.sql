@@ -191,7 +191,7 @@ pluto_merge AS (
         b.cd::text as cd
     FROM sname_merge a 
     LEFT JOIN dcp_pluto b
-    ON a.geo_bbl::numeric(19,8)::text = b.bbl::text
+    ON a.mapbbl::bigint::text = b.bbl::text
 ),
 
 normed_name_merge as (

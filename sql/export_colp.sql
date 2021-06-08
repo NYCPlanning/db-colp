@@ -9,7 +9,11 @@ SELECT
     "CD",
     "HNUM",
     "SNAME",
-    "ADDRESS",
+    (CASE 
+        WHEN "HNUM" IS NOT NULL AND "SNAME" <> ''
+            THEN CONCAT("HNUM", ' ', "SNAME")
+        ELSE "SNAME"
+    END) as "ADDRESS",
     "PARCELNAME",
     "AGENCY",
     "USECODE",

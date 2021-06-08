@@ -64,7 +64,6 @@ OUTPUTS:
         cd,
         hnum,
         sname,
-        address,
         parcelname,
         agency,
         usecode,
@@ -173,12 +172,7 @@ geo_merge as (
 
 sname_merge AS (
     SELECT a.*,
-        b.sname_1b as sname,
-        (CASE 
-                WHEN a.hnum IS NOT NULL AND b.sname_1b <> ''
-                    THEN CONCAT(a.hnum, ' ', b.sname_1b)
-                ELSE b.sname_1b
-        END) as address
+        b.sname_1b as sname
         FROM geo_merge a
         LEFT JOIN geo_qaqc b
         ON a.uid = b.uid
@@ -308,7 +302,6 @@ SELECT DISTINCT
     cd::smallint as "CD",
     hnum::varchar(20) as "HNUM",
     sname::varchar(40) as "SNAME",
-    address as "ADDRESS",
     parcelname as "PARCELNAME",
     agency::varchar(20) as "AGENCY",
     usecode::varchar(4) as "USECODE",

@@ -300,7 +300,8 @@ SELECT
     a."BBL",
     a."CD" as pluto_cd,
     b.cd as dcas_cd,
-    a."ADDRESS",
+    a."HNUM",
+    a."SNAME",
     a."PARCELNAME"
 INTO ipis_cd_errors
 FROM _colp a

@@ -27,7 +27,7 @@ SELECT
     "LONGITUDE",
     (CASE
         WHEN uid IN (SELECT DISTINCT uid FROM modifications_applied) THEN 'Y'
-    END) as "DCPEDITED",
+    END)::varchar(1) as "DCPEDITED",
     "GEOM"
 INTO colp
 FROM _colp

@@ -9,6 +9,7 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | ---- | ----------- |
 | [output.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/output.zip) | Zipped directory containing all files below |
 | [colp.shp.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.shp.zip) | Shapefile version COLP database, only including records with coordinates |
+| [colp.gdb.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.gdb.zip) | GeoDatabase version COLP database, only including records with coordinates |
 | [colp.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.csv) | CSV version COLP database, only including records with coordinates |
 | [ipis_modified_hnums.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_hnums.csv) | QAQC table of records with modified house numbers |
 | [ipis_modified_names.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_names.csv) | QAQC table of records with modified parcel names |

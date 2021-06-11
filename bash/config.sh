@@ -101,9 +101,11 @@ function FGDB_export {
         -lco GEOMETRY_NAME=Shape\
         -nln $name\
         -nlt $geomtype $name
-    )
-  rm -f $name.gdb.zip
-  zip -r $name.gdb.zip $name.gdb
+      rm -f $name.gdb.zip
+      zip -r $name.gdb.zip $name.gdb
+      rm -rf $name.gdb
+  )
+  mv $name.gdb/$name.gdb.zip $name.gdb.zip
   rm -rf $name.gdb
 }
 

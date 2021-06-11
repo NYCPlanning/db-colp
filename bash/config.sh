@@ -104,7 +104,9 @@ function FGDB_export {
       rm -f $name.gdb.zip
       zip -r $name.gdb.zip $name.gdb
       rm -rf $name.gdb
-    )
+  )
+  mv $name.gdb/$name.gdb.zip $name.gdb.zip
+  rm -rf $name.gdb
 }
 
 function Upload {

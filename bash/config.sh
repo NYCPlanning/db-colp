@@ -101,10 +101,10 @@ function FGDB_export {
         -lco GEOMETRY_NAME=Shape\
         -nln $name\
         -nlt $geomtype $name
-      rm -f $name.gdb.zip
-      zip -r $name.gdb.zip $name.gdb
-      rm -rf $name.gdb
     )
+  rm -f $name.gdb.zip
+  zip -r $name.gdb.zip $name.gdb
+  rm -rf $name.gdb
 }
 
 function Upload {

@@ -3,6 +3,8 @@ on:
   release:
     types:
       - published
+      - edited
+      - released
 
 jobs:
   publish:
@@ -25,4 +27,4 @@ jobs:
           latest: true
           compress: true
           output_format: shapefile csv pgdump
-          version: $VERSION
+          version: ${{ env.VERSION }}

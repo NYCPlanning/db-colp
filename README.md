@@ -25,10 +25,12 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 | [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Build date |
 
 ## Additional Resources
-Look-up tables for agency abbreviations and use types are availaible in CSV form under [`/resources`](https://github.com/NYCPlanning/db-colp/tree/master/resources)
+Look-up tables for agency abbreviations and use types are availaible in CSV form under [`/resources`](https://github.com/NYCPlanning/db-colp/tree/main/resources)
 
 ## Building COLP
-To build COLP, add an entry in [`maintenance/log.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/log.md), then commit with **`[build]`** in the commit message. More detailed intructions for building COLP are contained in [`maintenance/instructions.md`](https://github.com/NYCPlanning/db-colp/blob/master/maintenance/instructions.md).
+There are currently two methods to create colp:
+1. via a `push` event, make sure you include `[build]` in your commit message to trigger a build. This workflow can be triggered on all branches.
+2. via a `workflow_dispatch` event. Head to the `actions` tab of the repo and click **Run Workflow** under the **Build** section. 
 
 ## Data Dictionary
 `UID`

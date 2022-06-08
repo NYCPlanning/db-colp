@@ -146,4 +146,4 @@ static
 .library
 
 #Local output
-.output
+output/

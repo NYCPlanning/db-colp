@@ -53,7 +53,8 @@ BEGIN
             INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
             $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
     ELSE 
-        RAISE NOTICE 'Cannot Apply Correction';
+        RAISE NOTICE 'Cannot Apply Correction % to % on field % of table %',
+             _old_val, _new_val, _field, _table;
         EXECUTE format($n$
             DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);

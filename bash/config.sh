@@ -110,6 +110,8 @@ function FGDB_export {
 }
 
 function Upload {
-  mc rm -r --force spaces/edm-publishing/db-colp/$@/
-  mc cp -r output spaces/edm-publishing/db-colp/$@
+  local branchname=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+  local SPACES="spaces/edm-publishing/db-colp/$branchname"
+  mc rm -r --force $SPACES/$@
+  mc cp -r output $SPACES/$@
 }

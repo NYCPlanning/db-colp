@@ -27,26 +27,30 @@ CREATE OR REPLACE PROCEDURE correction (
 DECLARE
     field_type text;
     pre_corr_val text;
-    applicable boolean;
+    old_val_present boolean;
 BEGIN
     EXECUTE format($n$
         SELECT pg_typeof(a.%1$I) FROM %2$I a LIMIT 1;
     $n$, _field, _table) INTO field_type;
 
-    EXECUTE format($n$
-        SELECT a.%1$I::text FROM %2$I a WHERE a.uid = %3$L;
-    $n$, _field, _table, _uid) INTO pre_corr_val;
+    -- EXECUTE format($n$
+    --     SELECT a.%1$I::text FROM %2$I a WHERE a.%1$I::text = %3$L;
+    -- $n$, _field, _table, _old_val) INTO pre_corr_val;
+
+    -- EXECUTE format($n$
+    --     SELECT %1$L::%3$s = %2$L::%3$s 
+    --     OR (%1$L IS NULL AND %2$L IS NULL)
+    -- $n$, pre_corr_val, _old_val, field_type) INTO applicable;
 
     EXECUTE format($n$
-        SELECT %1$L::%3$s = %2$L::%3$s 
-        OR (%1$L IS NULL AND %2$L IS NULL)
-    $n$, pre_corr_val, _old_val, field_type) INTO applicable;
+        SELECT count(*)>0 FROM %2$I a WHERE a.%1$I::text = %3$L;
+    $n$, _field, _table, _old_val) INTO old_val_present;
 
-    IF applicable THEN 
+    IF old_val_present THEN 
         RAISE NOTICE 'Applying Correction';
         EXECUTE format($n$
-            UPDATE %1$I SET %2$I = %3$L::%4$s WHERE uid = %5$L;
-            $n$, _table, _field, _new_val, field_type, _uid);
+            UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
+            $n$, _table, _field, _old_val, _new_val, field_type);
 
         EXECUTE format($n$
             DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L;

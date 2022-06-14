@@ -19,7 +19,8 @@ psql $BUILD_ENGINE -f sql/clean_parcelname.sql
 psql $BUILD_ENGINE -f sql/create_colp.sql
 psql $BUILD_ENGINE -f sql/geo_qaqc.sql
 
-psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications_by_value');"
+psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications_by_value', 'value');"
+psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications_by_id', 'id');"
 
 echo "Generate output tables"
 psql $BUILD_ENGINE -f sql/export_colp.sql

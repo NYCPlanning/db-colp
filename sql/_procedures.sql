@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS modifications_applied;
 CREATE TABLE modifications_applied (
 	uid 	text,
 	field 	  		text,
-	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -11,7 +10,6 @@ DROP TABLE IF EXISTS modifications_not_applied;
 CREATE TABLE modifications_not_applied (
 	uid 	text,
 	field 	  		text,
-	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -27,7 +25,6 @@ CREATE OR REPLACE PROCEDURE correction (
 ) AS $BODY$
 DECLARE
     field_type text;
-    pre_corr_val text;
     records_to_recode boolean;
 BEGIN
     EXECUTE format($n$
@@ -56,16 +53,16 @@ BEGIN
                 $n$, _table, _field, _old_val, _new_val, field_type);
         END IF;
         EXECUTE format($n$
-            DELETE FROM modifications_applied WHERE field = %2$L AND old_value = %4$L;
-            INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
+            DELETE FROM modifications_applied WHERE field = %2$L AND old_value = %3$L;
+            INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4L);
+            $n$, _uid, _field, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction to field % in table % of changing value % to % ',
             _field, _table, _old_val, _new_val;
         EXECUTE format($n$
             DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
-            INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
+            INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4L);
+            $n$, _uid, _field, _old_val, _new_val);
     END IF;
 
 END

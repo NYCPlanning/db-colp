@@ -22,38 +22,41 @@ CREATE OR REPLACE PROCEDURE correction (
     _uid text,
     _field text,
     _old_val text,
-    _new_val text
+    _new_val text,
+    _how_recode text
 ) AS $BODY$
 DECLARE
     field_type text;
     pre_corr_val text;
-    old_val_present boolean;
+    records_to_recode boolean;
 BEGIN
     EXECUTE format($n$
         SELECT pg_typeof(a.%1$I) FROM %2$I a LIMIT 1;
     $n$, _field, _table) INTO field_type;
 
-    -- EXECUTE format($n$
-    --     SELECT a.%1$I::text FROM %2$I a WHERE a.%1$I::text = %3$L;
-    -- $n$, _field, _table, _old_val) INTO pre_corr_val;
+    IF _how_recode = 'id' THEN
+        EXECUTE format($n$
+            SELECT count(*) >0 FROM %1$I a WHERE a.uid = %2$L;
+        $n$, _table, _uid) INTO records_to_recode;
+    ELSE
+        EXECUTE format($n$
+            SELECT count(*)>0 FROM %2$I a WHERE a.%1$I::text = %3$L;
+        $n$, _field, _table, _old_val) INTO records_to_recode;
+    END IF;
 
-    -- EXECUTE format($n$
-    --     SELECT %1$L::%3$s = %2$L::%3$s 
-    --     OR (%1$L IS NULL AND %2$L IS NULL)
-    -- $n$, pre_corr_val, _old_val, field_type) INTO applicable;
-
-    EXECUTE format($n$
-        SELECT count(*)>0 FROM %2$I a WHERE a.%1$I::text = %3$L;
-    $n$, _field, _table, _old_val) INTO old_val_present;
-
-    IF old_val_present THEN 
+    IF records_to_recode THEN 
         RAISE NOTICE 'Applying Correction';
+        IF _how_recode = 'id' THEN
+            EXECUTE format($n$
+                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %1$I.uid = %3$L;
+            $n$, _table, _field, _uid, _new_val, field_type);
+        ELSE
+            EXECUTE format($n$
+                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
+                $n$, _table, _field, _old_val, _new_val, field_type);
+        END IF;
         EXECUTE format($n$
-            UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
-            $n$, _table, _field, _old_val, _new_val, field_type);
-
-        EXECUTE format($n$
-            DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L;
+            DELETE FROM modifications_applied WHERE field = %2$L AND old_value = %4$L;
             INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
             $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
     ELSE 
@@ -72,7 +75,8 @@ $BODY$ LANGUAGE plpgsql;
 DROP PROCEDURE IF EXISTS apply_correction;
 CREATE OR REPLACE PROCEDURE apply_correction (
     _table text, 
-    _modifications text
+    _modifications text,
+    _how_recode text
 ) AS $BODY$
 DECLARE 
     _uid text;
@@ -91,7 +95,7 @@ BEGIN
             WHERE field = any(%2$L)
         $n$, _modifications, _valid_fields)
     LOOP
-        CALL correction(_table, _uid, _field, _old_value, _new_value);
+        CALL correction(_table, _uid, _field, _old_value, _new_value, _how_recode);
     END LOOP;
 END
 $BODY$ LANGUAGE plpgsql;

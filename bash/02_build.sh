@@ -1,6 +1,8 @@
 #!/bin/bash
 source bash/config.sh
 
+psql $BUILD_ENGINE -f sql/load_modifications.sql  
+
 psql $BUILD_ENGINE -f sql/geo_inputs.sql
 
 docker run --rm\
@@ -17,7 +19,7 @@ psql $BUILD_ENGINE -f sql/clean_parcelname.sql
 psql $BUILD_ENGINE -f sql/create_colp.sql
 psql $BUILD_ENGINE -f sql/geo_qaqc.sql
 
-psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications');"
+psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications_by_value');"
 
 echo "Generate output tables"
 psql $BUILD_ENGINE -f sql/export_colp.sql

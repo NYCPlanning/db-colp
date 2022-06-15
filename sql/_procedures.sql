@@ -20,8 +20,7 @@ CREATE OR REPLACE PROCEDURE correction (
     _uid text,
     _field text,
     _old_val text,
-    _new_val text,
-    _how_recode text
+    _new_val text
 ) AS $BODY$
 DECLARE
     field_type text;
@@ -31,7 +30,7 @@ BEGIN
         SELECT pg_typeof(a.%1$I) FROM %2$I a LIMIT 1;
     $n$, _field, _table) INTO field_type;
 
-    IF _how_recode = 'id' THEN
+    IF _uid IS NOT NULL THEN
         EXECUTE format($n$
             SELECT count(*) >0 FROM %1$I a WHERE a.uid = %2$L;
         $n$, _table, _uid) INTO records_to_recode;
@@ -43,7 +42,7 @@ BEGIN
 
     IF records_to_recode THEN 
         RAISE NOTICE 'Applying Correction';
-        IF _how_recode = 'id' THEN
+        IF _uid IS NOT NULL THEN
             EXECUTE format($n$
                 UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %1$I.uid = %3$L;
             $n$, _table, _field, _uid, _new_val, field_type);
@@ -72,8 +71,7 @@ $BODY$ LANGUAGE plpgsql;
 DROP PROCEDURE IF EXISTS apply_correction;
 CREATE OR REPLACE PROCEDURE apply_correction (
     _table text, 
-    _modifications text,
-    _how_recode text
+    _modifications text
 ) AS $BODY$
 DECLARE 
     _uid text;
@@ -92,7 +90,7 @@ BEGIN
             WHERE field = any(%2$L)
         $n$, _modifications, _valid_fields)
     LOOP
-        CALL correction(_table, _uid, _field, _old_value, _new_value, _how_recode);
+        CALL correction(_table, _uid, _field, _old_value, _new_value);
     END LOOP;
 END
 $BODY$ LANGUAGE plpgsql;

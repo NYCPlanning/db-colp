@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS modifications_applied;
 CREATE TABLE modifications_applied (
 	uid 	text,
 	field 	  		text,
-	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -11,7 +10,6 @@ DROP TABLE IF EXISTS modifications_not_applied;
 CREATE TABLE modifications_not_applied (
 	uid 	text,
 	field 	  		text,
-	pre_corr_value 	text,
 	old_value 		text,
 	new_value 		text
 );
@@ -26,39 +24,46 @@ CREATE OR REPLACE PROCEDURE correction (
 ) AS $BODY$
 DECLARE
     field_type text;
-    pre_corr_val text;
-    applicable boolean;
+    records_to_recode boolean;
 BEGIN
     EXECUTE format($n$
         SELECT pg_typeof(a.%1$I) FROM %2$I a LIMIT 1;
     $n$, _field, _table) INTO field_type;
 
-    EXECUTE format($n$
-        SELECT a.%1$I::text FROM %2$I a WHERE a.uid = %3$L;
-    $n$, _field, _table, _uid) INTO pre_corr_val;
+    IF _uid IS NOT NULL THEN
+        EXECUTE format($n$
+            SELECT count(*) >0 FROM %1$I a WHERE a.uid = %2$L;
+        $n$, _table, _uid) INTO records_to_recode;
+    ELSE
+        EXECUTE format($n$
+            SELECT count(*)>0 FROM %2$I a WHERE a.%1$I::text = %3$L;
+        $n$, _field, _table, _old_val) INTO records_to_recode;
+    END IF;
 
-    EXECUTE format($n$
-        SELECT %1$L::%3$s = %2$L::%3$s 
-        OR (%1$L IS NULL AND %2$L IS NULL)
-    $n$, pre_corr_val, _old_val, field_type) INTO applicable;
-
-    IF applicable THEN 
+    IF records_to_recode THEN 
         RAISE NOTICE 'Applying Correction';
+        IF _uid IS NOT NULL THEN
+            EXECUTE format($n$
+                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %1$I.uid = %3$L;
+            $n$, _table, _field, _uid, _new_val, field_type);
+            EXECUTE format($n$
+                DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L AND old_value = %3$L;
+            $n$, _uid, _field, _old_val, _new_val);
+        ELSE
+            EXECUTE format($n$
+                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
+                $n$, _table, _field, _old_val, _new_val, field_type);
+        END IF;
         EXECUTE format($n$
-            UPDATE %1$I SET %2$I = %3$L::%4$s WHERE uid = %5$L;
-            $n$, _table, _field, _new_val, field_type, _uid);
-
-        EXECUTE format($n$
-            DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L;
-            INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
+            INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4L);
+            $n$, _uid, _field, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction to field % in table % of changing value % to % ',
             _field, _table, _old_val, _new_val;
         EXECUTE format($n$
             DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
-            INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4$L, %5L);
-            $n$, _uid, _field, pre_corr_val, _old_val, _new_val);
+            INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4L);
+            $n$, _uid, _field, _old_val, _new_val);
     END IF;
 
 END

@@ -1,6 +1,8 @@
 #!/bin/bash
 source bash/config.sh
 
+psql $BUILD_ENGINE -f sql/load_modifications.sql  
+
 psql $BUILD_ENGINE -f sql/geo_inputs.sql
 
 docker run --rm\

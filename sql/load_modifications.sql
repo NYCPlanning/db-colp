@@ -9,6 +9,7 @@ CREATE TABLE modifications(
     notes text
 );
 
+
 \COPY modifications FROM 'data/modifications.csv' DELIMITER ',' CSV HEADER;
 
 DROP TABLE IF EXISTS reviewed_modified_names;
@@ -27,3 +28,4 @@ CREATE TABLE reviewed_modified_names(
 );
 
 \COPY reviewed_modified_names FROM 'data/ipis_modified_names.csv' DELIMITER ',' CSV HEADER;
+

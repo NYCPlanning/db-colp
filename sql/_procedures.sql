@@ -46,20 +46,24 @@ BEGIN
             EXECUTE format($n$
                 UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %1$I.uid = %3$L;
             $n$, _table, _field, _uid, _new_val, field_type);
+            EXECUTE format($n$
+                DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L AND old_value = %3$L;
+            $n$, _uid, _field, _old_val, _new_val);
+            EXECUTE format($n$
+            DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
+            $n$, _uid, _field, _old_val, _new_val);
         ELSE
             EXECUTE format($n$
                 UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
                 $n$, _table, _field, _old_val, _new_val, field_type);
         END IF;
         EXECUTE format($n$
-            DELETE FROM modifications_applied WHERE field = %2$L AND old_value = %3$L;
             INSERT INTO modifications_applied VALUES (%1$L, %2$L, %3$L, %4L);
             $n$, _uid, _field, _old_val, _new_val);
     ELSE 
         RAISE NOTICE 'Cannot Apply Correction to field % in table % of changing value % to % ',
             _field, _table, _old_val, _new_val;
         EXECUTE format($n$
-            DELETE FROM modifications_not_applied WHERE uid = %1$L AND field = %2$L;
             INSERT INTO modifications_not_applied VALUES (%1$L, %2$L, %3$L, %4L);
             $n$, _uid, _field, _old_val, _new_val);
     END IF;

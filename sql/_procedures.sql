@@ -44,14 +44,14 @@ BEGIN
         RAISE NOTICE 'Applying Correction';
         IF _uid IS NOT NULL THEN
             EXECUTE format($n$
-                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %1$I.uid = %3$L;
+                UPDATE %1$I SET %2$I = %4$L::%5$s, "DCPEDITED" = 'Y' WHERE %1$I.uid = %3$L;
             $n$, _table, _field, _uid, _new_val, field_type);
             EXECUTE format($n$
                 DELETE FROM modifications_applied WHERE uid = %1$L AND field = %2$L AND old_value = %3$L;
             $n$, _uid, _field, _old_val, _new_val);
         ELSE
             EXECUTE format($n$
-                UPDATE %1$I SET %2$I = %4$L::%5$s WHERE %2$I = %3$L;
+                UPDATE %1$I SET %2$I = %4$L::%5$s, "DCPEDITED" = 'Y'  WHERE %2$I = %3$L;
                 $n$, _table, _field, _old_val, _new_val, field_type);
         END IF;
         EXECUTE format($n$

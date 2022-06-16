@@ -7,22 +7,22 @@ The input data for COLP is the Integrated Property Information System (IPIS), a 
 ## Outputs
 | File | Description |
 | ---- | ----------- |
-| [output.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/output.zip) | Zipped directory containing all files below |
-| [colp.shp.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.shp.zip) | Shapefile version COLP database, only including records with coordinates |
-| [colp.gdb.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.gdb.zip) | GeoDatabase version COLP database, only including records with coordinates |
-| [colp.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/colp.csv) | CSV version COLP database, only including records with coordinates |
-| [ipis_modified_hnums.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_hnums.csv) | QAQC table of records with modified house numbers |
-| [ipis_modified_names.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_modified_names.csv) | QAQC table of records with modified parcel names |
-| [usetype_changes.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/usetype_changes.csv) | QAQC table of version-to-version changes in the number of records per use type |
-| [modifications_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/modifications_applied.csv) | Table of manual modifications that were applied |
-| [modifications_not_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/modifications_not_applied.csv) | Table of manual modifications that existed in the modifications table, but failed to get applied |
-| [ipis_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_unmapped.csv) | QAQC table of unmappable input records |
-| [ipis_colp_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_colp_geoerrors.csv) | QAQC table of addresses that return errors (or warnings type 1-9, B, C, I, J) from 1B |
-| [ipis_sname_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_sname_errors.csv) | QAQC table of addresses that return streetname errors (GRC is 11 or EE) from 1B |
-| [ipis_hnum_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_hnum_errors.csv) | QAQC table of addresses that return out-of-range address errors (GRC is 41 or 42) from 1B |
-| [ipis_bbl_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_bbl_errors.csv) | QAQC table of records where address isn't valid for input BBL |
-| [ipis_cd_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/ipis_cd_errors.csv) | QAQC table of mismatch between IPIS community district and PLUTO |
-| [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/latest/output/version.txt) | Build date |
+| [output.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/output.zip) | Zipped directory containing all files below |
+| [colp.shp.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/colp.shp.zip) | Shapefile version COLP database, only including records with coordinates |
+| [colp.gdb.zip](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/colp.gdb.zip) | GeoDatabase version COLP database, only including records with coordinates |
+| [colp.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/colp.csv) | CSV version COLP database, only including records with coordinates |
+| [ipis_modified_hnums.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_modified_hnums.csv) | QAQC table of records with modified house numbers |
+| [ipis_modified_names.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_modified_names.csv) | QAQC table of records with modified parcel names |
+| [usetype_changes.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/usetype_changes.csv) | QAQC table of version-to-version changes in the number of records per use type |
+| [modifications_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/modifications_applied.csv) | Table of manual modifications that were applied |
+| [modifications_not_applied.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/modifications_not_applied.csv) | Table of manual modifications that existed in the modifications table, but failed to get applied |
+| [ipis_unmapped.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_unmapped.csv) | QAQC table of unmappable input records |
+| [ipis_colp_geoerrors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_colp_geoerrors.csv) | QAQC table of addresses that return errors (or warnings type 1-9, B, C, I, J) from 1B |
+| [ipis_sname_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_sname_errors.csv) | QAQC table of addresses that return streetname errors (GRC is 11 or EE) from 1B |
+| [ipis_hnum_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_hnum_errors.csv) | QAQC table of addresses that return out-of-range address errors (GRC is 41 or 42) from 1B |
+| [ipis_bbl_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_bbl_errors.csv) | QAQC table of records where address isn't valid for input BBL |
+| [ipis_cd_errors.csv](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/ipis_cd_errors.csv) | QAQC table of mismatch between IPIS community district and PLUTO |
+| [version.txt](https://edm-publishing.nyc3.digitaloceanspaces.com/db-colp/main/latest/output/version.txt) | Build date |
 
 ## Additional Resources
 Look-up tables for agency abbreviations and use types are availaible in CSV form under [`/resources`](https://github.com/NYCPlanning/db-colp/tree/main/resources)

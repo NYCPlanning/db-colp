@@ -51,7 +51,7 @@ BEGIN
             $n$, _uid, _field, _old_val, _new_val);
         ELSE
             EXECUTE format($n$
-                UPDATE %1$I SET %2$I = %4$L::%5$s, "DCPEDITED" = 'Y'  WHERE %2$I = %3$L;
+                UPDATE %1$I SET %2$I = %4$L::%5$s, "DCPEDITED" = 'Y' WHERE %2$I = %3$L;
                 $n$, _table, _field, _old_val, _new_val, field_type);
         END IF;
         EXECUTE format($n$

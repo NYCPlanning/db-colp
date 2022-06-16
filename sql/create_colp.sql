@@ -313,11 +313,11 @@ SELECT DISTINCT
     leased::varchar(2) as "LEASED",
     finalcom::varchar(2) as "FINALCOM",
     agreement::varchar(2) as "AGREEMENT",
-    NULL as "DCPEDITED",
     round(xcoord::numeric)::numeric(10,0) as "XCOORD",
     round(ycoord::numeric)::numeric(10,0) as "YCOORD",
     latitude::numeric(19,7) as "LATITUDE",
     longitude::numeric(19,7) as "LONGITUDE",
+    NULL as "DCPEDITED",
     ST_Transform(geom, 2263) as "GEOM"
 INTO _colp
 FROM categorized;

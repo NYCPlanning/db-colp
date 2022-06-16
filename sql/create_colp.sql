@@ -317,6 +317,7 @@ SELECT DISTINCT
     round(ycoord::numeric)::numeric(10,0) as "YCOORD",
     latitude::numeric(19,7) as "LATITUDE",
     longitude::numeric(19,7) as "LONGITUDE",
+    NULL as "DCPEDITED",
     ST_Transform(geom, 2263) as "GEOM"
 INTO _colp
 FROM categorized;

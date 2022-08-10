@@ -11,12 +11,11 @@ mkdir -p output && (
     FGDB_export colp POINT
 
     echo "[$(date)] $DATE" > version.txt
-
-
 )
 
 mkdir -p output/qaqc && (
     cd output/qaqc
+    
     echo "exporting qaqc"
     CSV_export ipis_unmapped
     CSV_export ipis_colp_geoerrors

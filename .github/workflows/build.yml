@@ -11,7 +11,7 @@ jobs:
       github.event_name == 'workflow_dispatch' 
     services:
       db:
-        image: postgis/postgis:11-3.0-alpine
+        image: postgis/postgis:12-3.0-alpine
         env:
           POSTGRES_PASSWORD: postgres
         options: >-

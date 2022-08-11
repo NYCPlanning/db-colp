@@ -20,5 +20,7 @@ psql $BUILD_ENGINE -f sql/create_colp.sql
 
 psql $BUILD_ENGINE -1 -c "CALL apply_correction('_colp', 'modifications');"
 
+psql $BUILD_ENGINE -f sql/qc_geospatial_check.sql 
+
 echo "Generate output tables"
 psql $BUILD_ENGINE -f sql/export_colp.sql

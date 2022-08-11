@@ -17,3 +17,18 @@ from (
           WHERE NOT ST_WITHIN(ST_GeomFromEWKT(a.wkb_geometry), combined.geom)) tmp
     )t
 );
+
+INSERT INTO geospatial_check (
+select  jsonb_agg(t) as result
+from (
+    select jsonb_agg(json_build_object('uid', tmp.uid, 'borough', tmp.borough, 'cd', tmp.cd,  
+    'bbl', tmp.bbl, 'v', tmp.v)) as values, 
+                              'projects_inconsistent_geographies' as field
+	from (
+        select uid, borough, cd, bbl, v
+        FROM dcp_colp
+        WHERE borough <> LEFT(cd::TEXT, 1)
+        OR borough <> LEFT(bbl::TEXT, 1)
+    ) tmp
+    )t
+);

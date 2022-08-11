@@ -43,6 +43,9 @@ jobs:
     - name: Build COLP ...
       run: ./colp.sh build
 
+    - name: Run QAQC ...
+      run: ./colp.sh qaqc
+
     - name: Export COLP ...
       run: ./colp.sh export
 

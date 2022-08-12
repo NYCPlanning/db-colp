@@ -11,4 +11,4 @@ docker run --rm\
     nycplanning/docker-geosupport:latest bash -c "python3 -m python.geo_qaqc"
 
 psql $BUILD_ENGINE -f sql/geo_qaqc.sql
-psql $BUILD_ENGINE -f sql/export_qaqc.sql
+psql $BUILD_ENGINE -f sql/colp_qaqc.sql

@@ -11,7 +11,8 @@ docker run --rm\
     -w /home/colp_build\
     -u $(id -u ${USER}):$(id -g ${USER}) \
     -e BUILD_ENGINE=$BUILD_ENGINE\
-    nycplanning/docker-geosupport:latest bash -c "python3 -m python.geocode"
+    nycplanning/docker-geosupport:latest bash -c "python3 -m python.geocode;
+                                                  python3 -m python.geo_qaqc"
 
 psql $BUILD_ENGINE -f sql/_procedures.sql
 psql $BUILD_ENGINE -f sql/clean_parcelname.sql

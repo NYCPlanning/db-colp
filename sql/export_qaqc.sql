@@ -358,5 +358,5 @@ FROM colp GROUP BY "USETYPE";
 DROP TABLE if exists records_by_agency_usetype;
 SELECT
 "AGENCY", "USETYPE", count(*) 
-INTO records_by_usetype
+INTO records_by_agency_usetype
 FROM colp GROUP BY "AGENCY", "USETYPE";

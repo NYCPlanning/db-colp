@@ -21,6 +21,9 @@ mkdir -p output && (
     CSV_export usetype_changes
     CSV_export modifications_applied
     CSV_export modifications_not_applied
+    CSV_export records_by_agency
+    CSV_export records_by_usetype
+    CSV_export records_by_agency_usetype
     echo "[$(date)] $DATE" > version.txt
 
 )

@@ -21,6 +21,7 @@ mkdir -p output && (
     CSV_export usetype_changes
     CSV_export modifications_applied
     CSV_export modifications_not_applied
+    CSV_export geospatial_check
     echo "[$(date)] $DATE" > version.txt
 
 )

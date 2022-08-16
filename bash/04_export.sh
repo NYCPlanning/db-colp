@@ -28,6 +28,7 @@ mkdir -p output/qaqc && (
     CSV_export usetype_changes
     CSV_export modifications_applied
     CSV_export modifications_not_applied
+    CSV_export geospatial_check
 )
 
 

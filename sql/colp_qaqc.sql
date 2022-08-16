@@ -341,3 +341,22 @@ INTO usetype_changes
 FROM prev a
 JOIN current b 
 ON a.usetype = b.usetype;
+
+-- Create QAQC tables of count of records by agency and usetype
+DROP TABLE if exists records_by_agency;
+SELECT
+"AGENCY", count(*) 
+INTO records_by_agency
+FROM colp GROUP BY "AGENCY";
+
+DROP TABLE if exists records_by_usetype;
+SELECT
+"USETYPE", count(*) 
+INTO records_by_usetype
+FROM colp GROUP BY "USETYPE";
+
+DROP TABLE if exists records_by_agency_usetype;
+SELECT
+"AGENCY", "USETYPE", count(*) 
+INTO records_by_agency_usetype
+FROM colp GROUP BY "AGENCY", "USETYPE";

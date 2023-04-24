@@ -1,7 +1,7 @@
 from multiprocessing import Pool, cpu_count
 from geosupport import Geosupport, GeosupportError
 import pandas as pd
-import re
+from sqlalchemy import text
 
 from .utils import engine, psql_insert_copy
 
@@ -60,32 +60,33 @@ def run_1b(inputs):
             }
 
 if __name__ == "__main__":
-    df = pd.read_sql("""
-        SELECT DISTINCT 
-            uid, 
-            ipis_bbl as bbl, 
-            house_number, 
-            street_name
-        FROM geo_inputs""", con=engine)
+    with engine.begin() as conn:
+        df = pd.read_sql(text("""
+            SELECT DISTINCT 
+                uid, 
+                ipis_bbl as bbl, 
+                house_number, 
+                street_name
+            FROM geo_inputs"""), conn)
 
-    df.house_number = df.house_number.str.rstrip(r"¦")
-    print(f"Input data shape: {df.shape}")
+        df.house_number = df.house_number.str.rstrip(r"¦")
+        print(f"Input data shape: {df.shape}")
 
-    records = df.to_dict("records")
-    
-    # Multiprocess
-    print("Geocode DCAS addresses with 1B...")
-    with Pool(processes=cpu_count()) as pool:
-        it = pool.map(run_1b, records, 10000)
+        records = df.to_dict("records")
+        
+        # Multiprocess
+        print("Geocode DCAS addresses with 1B...")
+        with Pool(processes=cpu_count()) as pool:
+            it = pool.map(run_1b, records, 10000)
 
-    print("Geocoding finished ...")
-    result = pd.DataFrame(it)
-    print(result.head())
+        print("Geocoding finished ...")
+        result = pd.DataFrame(it)
+        print(result.head())
 
-    result.to_sql(
-        "geo_qaqc",
-        con=engine,
-        if_exists="replace",
-        index=False,
-        method=psql_insert_copy,
-    )
+        result.to_sql(
+            "geo_qaqc",
+            con=conn,
+            if_exists="replace",
+            index=False,
+            method=psql_insert_copy,
+        )

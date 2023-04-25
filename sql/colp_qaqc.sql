@@ -318,7 +318,7 @@ prev AS (
     SELECT
         v as v_previous,
         usetype,
-        COUNT(*) as num_records_current
+        COUNT(*) as num_records_previous
     FROM dcp_colp
     GROUP BY v, usetype
 ),
@@ -326,7 +326,7 @@ current AS (
     SELECT
         TO_CHAR(CURRENT_DATE, 'YYYY/MM/DD') as v_current,
         "USETYPE" as usetype,
-        COUNT(*) as num_records_previous
+        COUNT(*) as num_records_current
     FROM colp
     GROUP BY "USETYPE"
 )
@@ -334,9 +334,9 @@ SELECT
     a.usetype,
     a.v_previous,
     b.v_current,
-    a.num_records_current,
-    b.num_records_previous,
-    a.num_records_current - b.num_records_previous as difference
+    b.num_records_current,
+    a.num_records_previous,
+    b.num_records_current - a.num_records_previous as difference
 INTO usetype_changes
 FROM prev a
 JOIN current b 

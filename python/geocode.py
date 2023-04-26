@@ -1,6 +1,7 @@
 from multiprocessing import Pool, cpu_count
 from geosupport import Geosupport, GeosupportError
 import pandas as pd
+from sqlalchemy import text
 
 from .utils import engine, psql_insert_copy
 
@@ -22,7 +23,6 @@ def parse_output(geo):
 
 def geocode(inputs):
     bbl = inputs.pop("bbl")
-    borough = bbl[0]
 
     # Run input BBL through BL to get address. BL output gets saved in case 1A/1B fail.
     try:
@@ -36,39 +36,40 @@ def geocode(inputs):
     return geo_bl
 
 if __name__ == '__main__':
-    df = pd.read_sql('''
-                        SELECT DISTINCT geo_bbl as bbl
-                        FROM geo_inputs
-                    ''',
-                    con=engine)
-    print(f"input data shape: {df.shape}")
+    with engine.begin() as conn:
+        df = pd.read_sql(text('''
+                            SELECT DISTINCT geo_bbl as bbl
+                            FROM geo_inputs
+                        '''),
+                        conn)
+        print(f"input data shape: {df.shape}")
 
-    records = df.to_dict("records")
+        records = df.to_dict("records")
+        
+        print("geocoding begins here ...")
+        # Multiprocess
+        with Pool(processes=cpu_count()) as pool:
+            it = pool.map(geocode, records, 10000)
+        
+        print("geocoding finished ...")
+        result = pd.DataFrame(it)
+        print(result.head())
     
-    print("geocoding begins here ...")
-    # Multiprocess
-    with Pool(processes=cpu_count()) as pool:
-        it = pool.map(geocode, records, 10000)
-    
-    print("geocoding finished ...")
-    result = pd.DataFrame(it)
-    print(result.head())
+        result.to_sql(
+            "dcas_ipis_geocodes",
+            con=conn,
+            if_exists="replace",
+            index=False,
+            method=psql_insert_copy,
+        )
 
-    result.to_sql(
-        "dcas_ipis_geocodes",
-        con=engine,
-        if_exists="replace",
-        index=False,
-        method=psql_insert_copy,
-    )
-
-    engine.execute(f"""
-        ALTER TABLE dcas_ipis_geocodes
-            ADD wkb_geometry geometry(Geometry,4326);
-        UPDATE dcas_ipis_geocodes
-        SET wkb_geometry = ST_SetSRID(ST_Point(longitude::DOUBLE PRECISION,
-                            latitude::DOUBLE PRECISION), 4326); 
-        UPDATE dcas_ipis_geocodes
-        SET x_coord = ST_X(ST_TRANSFORM(wkb_geometry, 2263))::text,
-            y_coord = ST_Y(ST_TRANSFORM(wkb_geometry, 2263))::text;
-    """)
+        conn.execute(text("""
+            ALTER TABLE dcas_ipis_geocodes
+                ADD wkb_geometry geometry(Geometry,4326);
+            UPDATE dcas_ipis_geocodes
+            SET wkb_geometry = ST_SetSRID(ST_Point(longitude::DOUBLE PRECISION,
+                                latitude::DOUBLE PRECISION), 4326); 
+            UPDATE dcas_ipis_geocodes
+            SET x_coord = ST_X(ST_TRANSFORM(wkb_geometry, 2263))::text,
+                y_coord = ST_Y(ST_TRANSFORM(wkb_geometry, 2263))::text;
+        """))

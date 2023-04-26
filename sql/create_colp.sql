@@ -108,14 +108,16 @@ geo_merge as (
         END) as mapbbl,
         -- Include cleaned house number from source data
         CASE
-            WHEN a.house_number = '0' THEN ''
-            ELSE LTRIM(
+            WHEN a.house_number = '0' THEN NULL
+            ELSE NULLIF(
                     LTRIM(
-                        regexp_replace(
-                            REPLACE(a.house_number, '&', ' AND ')
-                            , '[^a-zA-Z0-9 /-]+', '','g'), 
-                    '-'),
-                ' ')
+                        LTRIM(
+                            regexp_replace(
+                                REPLACE(a.house_number, '&', ' AND ')
+                                , '[^a-zA-Z0-9 /-]+', '','g'), 
+                        '-'),
+                    ' ')
+                , '')
         END as hnum,
         -- Temporarily include source data sname
         a.street_name as _sname,
